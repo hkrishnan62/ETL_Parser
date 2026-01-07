@@ -1,0 +1,10 @@
+source_column,target_column,transformation,is_key
+customer_id,customer_id,source_table.customer_id,TRUE
+first_name,full_name,"CONCAT(source_table.first_name, ' ', source_table.last_name)",FALSE
+email,email_address,LOWER(TRIM(source_table.email)),FALSE
+phone,contact_phone,"REGEXP_REPLACE(source_table.phone, '[^0-9]', '')",FALSE
+created_date,created_timestamp,"CAST(source_table.created_date AS TIMESTAMP)",FALSE
+status,status_code,"CASE WHEN source_table.status = 'A' THEN 'ACTIVE' WHEN source_table.status = 'I' THEN 'INACTIVE' ELSE 'UNKNOWN' END",FALSE
+total_amount,total_sales,"ROUND(source_table.total_amount, 2)",FALSE
+discount_pct,discount_percentage,"source_table.discount_pct * 100",FALSE
+region,region_name,UPPER(source_table.region),FALSE

@@ -1,0 +1,23 @@
+# Desktop Application Requirements
+# Install these in addition to regular requirements.txt
+
+# Core desktop GUI
+pywebview==4.4.1
+
+# Platform-specific backends (install based on OS)
+# Windows: pythonnet (automatically installed with pywebview)
+# macOS: pyobjc (automatically installed with pywebview)
+# Linux: PyGObject, PyQt5, or PySide2
+
+# For building standalone executables
+pyinstaller==6.3.0
+
+# All regular requirements
+flask==3.0.0
+pandas==2.1.4
+werkzeug==3.0.1
+python-dotenv==1.0.0
+openai==1.12.0
+langchain==0.1.9
+langchain-openai==0.0.5
+gunicorn==21.2.0
