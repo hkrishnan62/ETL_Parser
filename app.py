@@ -30,15 +30,19 @@ def index():
     return render_template('index.html')
 
 
-@app.route('/<path:filename>')
-def serve_verification_file(filename):
-    """Serve Google verification or other static files from root"""
-    if filename.startswith('google') and filename.endswith('.html'):
-        static_folder = os.path.join(os.path.dirname(__file__), 'static')
-        file_path = os.path.join(static_folder, filename)
-        if os.path.exists(file_path):
-            return send_file(file_path, mimetype='text/html')
-    return "File not found", 404
+@app.route('/google<verification_code>.html')
+def google_verification(verification_code):
+    """Serve Google Search Console verification file"""
+    filename = f'google{verification_code}.html'
+    static_folder = os.path.join(os.path.dirname(__file__), 'static')
+    file_path = os.path.join(static_folder, filename)
+    
+    if os.path.exists(file_path):
+        with open(file_path, 'r') as f:
+            content = f.read()
+        return content, 200, {'Content-Type': 'text/html'}
+    
+    return "Verification file not found", 404
 
 
 @app.route('/upload', methods=['POST'])
