@@ -14,7 +14,7 @@ pyinstaller==6.3.0
 
 # All regular requirements
 flask==3.0.0
-pandas==2.1.4
+pandas==2.2.0
 werkzeug==3.0.1
 python-dotenv==1.0.0
 openai==1.12.0
