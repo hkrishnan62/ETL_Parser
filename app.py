@@ -9,7 +9,7 @@ from src.ai_enhanced_validator import AIEnhancedValidator
 from src.ai_agent import get_ai_agent
 import traceback
 
-app = Flask(__name__)
+app = Flask(__name__, static_folder='static', static_url_path='')
 app.config['UPLOAD_FOLDER'] = 'uploads'
 app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024  # 16MB max file size
 app.config['ALLOWED_EXTENSIONS'] = {'csv'}
@@ -28,21 +28,6 @@ def allowed_file(filename):
 def index():
     """Render main page"""
     return render_template('index.html')
-
-
-@app.route('/google<verification_code>.html')
-def google_verification(verification_code):
-    """Serve Google Search Console verification file"""
-    filename = f'google{verification_code}.html'
-    static_folder = os.path.join(os.path.dirname(__file__), 'static')
-    file_path = os.path.join(static_folder, filename)
-    
-    if os.path.exists(file_path):
-        with open(file_path, 'r') as f:
-            content = f.read()
-        return content, 200, {'Content-Type': 'text/html'}
-    
-    return "Verification file not found", 404
 
 
 @app.route('/upload', methods=['POST'])
