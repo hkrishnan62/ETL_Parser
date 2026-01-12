@@ -405,7 +405,9 @@
         // File input handling with better feedback
         const fileInput = document.getElementById('fileInput');
         const fileName = document.getElementById('fileName');
+        const fileUploadArea = document.getElementById('fileUploadArea');
         
+        // File selection handler
         fileInput.addEventListener('change', function(e) {
             if (e.target.files && e.target.files.length > 0) {
                 const file = e.target.files[0];
@@ -418,17 +420,12 @@
             }
         });
         
-        // Ensure file upload area is clickable
-        document.querySelector('.file-upload').addEventListener('click', function(e) {
-            if (e.target.id !== 'fileInput') {
-                e.preventDefault();
-                fileInput.click();
-            }
+        // Make the entire upload area clickable
+        fileUploadArea.addEventListener('click', function(e) {
+            fileInput.click();
         });
         
         // Add drag and drop functionality
-        const fileUploadArea = document.getElementById('fileUploadArea');
-        
         fileUploadArea.addEventListener('dragover', function(e) {
             e.preventDefault();
             e.stopPropagation();
