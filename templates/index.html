@@ -619,7 +619,10 @@
                 const title = key.split('_').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
                 const querySection = document.createElement('div');
                 querySection.className = 'query-section';
-                querySection.innerHTML = `
+                querySection.innerHTML = '<div class="query-header"><h3>' + title + '</h3><button class="copy-btn" onclick="copyQuery(this)">📋 Copy Query</button></div><div class="query-box">' + escapeHtml(queries[key]) + '</div>';
+                queriesDiv.appendChild(querySection);
+            });
+        }
         
         // AI Modal Functions
         function showAISuggestion() {
@@ -731,15 +734,6 @@
             } catch (err) {
                 resultDiv.innerHTML = '<div class="error show">Error: ' + err.message + '</div>';
             }
-        }
-                    <div class="query-header">
-                        <h3>${title}</h3>
-                        <button class="copy-btn" onclick="copyQuery(this)">📋 Copy Query</button>
-                    </div>
-                    <div class="query-box">${escapeHtml(queries[key])}</div>
-                `;
-                queriesDiv.appendChild(querySection);
-            });
         }
         
         function copyQuery(button) {
