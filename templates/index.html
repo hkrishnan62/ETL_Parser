@@ -268,7 +268,7 @@
                 <div class="form-section">
                     <h2>📄 Upload Mapping Document</h2>
                     <div class="form-group">
-                        <div class="file-upload" onclick="document.getElementById('fileInput').click()">
+                        <div class="file-upload" id="fileUploadArea">
                             <label class="file-upload-label">
                                 📁 Click to select CSV or Excel file or drag and drop
                             </label>
@@ -402,13 +402,58 @@
     </div>
     
     <script>
-        // File input handling
+        // File input handling with better feedback
         const fileInput = document.getElementById('fileInput');
         const fileName = document.getElementById('fileName');
         
         fileInput.addEventListener('change', function(e) {
-            if (e.target.files.length > 0) {
-                fileName.textContent = `Selected: ${e.target.files[0].name}`;
+            if (e.target.files && e.target.files.length > 0) {
+                const file = e.target.files[0];
+                fileName.textContent = `Selected: ${file.name} (${(file.size / 1024).toFixed(2)} KB)`;
+                fileName.style.color = '#667eea';
+                fileName.style.fontWeight = 'bold';
+                console.log('File selected:', file.name, 'Type:', file.type, 'Size:', file.size);
+            } else {
+                fileName.textContent = '';
+            }
+        });
+        
+        // Ensure file upload area is clickable
+        document.querySelector('.file-upload').addEventListener('click', function(e) {
+            if (e.target.id !== 'fileInput') {
+                e.preventDefault();
+                fileInput.click();
+            }
+        });
+        
+        // Add drag and drop functionality
+        const fileUploadArea = document.getElementById('fileUploadArea');
+        
+        fileUploadArea.addEventListener('dragover', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            this.style.backgroundColor = '#e8f0fe';
+            this.style.borderColor = '#667eea';
+        });
+        
+        fileUploadArea.addEventListener('dragleave', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            this.style.backgroundColor = '';
+            this.style.borderColor = '#667eea';
+        });
+        
+        fileUploadArea.addEventListener('drop', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            this.style.backgroundColor = '';
+            this.style.borderColor = '#667eea';
+            
+            if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
+                fileInput.files = e.dataTransfer.files;
+                // Trigger change event
+                const event = new Event('change', { bubbles: true });
+                fileInput.dispatchEvent(event);
             }
         });
         
@@ -416,9 +461,32 @@
         document.getElementById('uploadForm').addEventListener('submit', async function(e) {
             e.preventDefault();
             
+            // Validate file is selected
+            if (!fileInput.files || fileInput.files.length === 0) {
+                alert('Please select a file to upload');
+                return;
+            }
+            
+            const file = fileInput.files[0];
+            const fileExt = file.name.split('.').pop().toLowerCase();
+            
+            // Validate file extension
+            if (!['csv', 'xlsx', 'xls'].includes(fileExt)) {
+                alert('Please upload a CSV or Excel file (.csv, .xlsx, .xls)');
+                return;
+            }
+            
+            // Validate file size (16MB limit)
+            if (file.size > 16 * 1024 * 1024) {
+                alert('File size must be less than 16MB');
+                return;
+            }
+            
             const formData = new FormData(this);
             const useAI = document.getElementById('useAI').checked;
             formData.append('use_ai', useAI);
+            
+            console.log('Uploading file:', file.name, 'Size:', file.size, 'Type:', file.type);
             
             const loading = document.getElementById('loading');
             const results = document.getElementById('results');
@@ -437,11 +505,18 @@
                     body: formData
                 });
                 
+                if (!response.ok) {
+                    const errorText = await response.text();
+                    throw new Error(`Server error: ${response.status} - ${errorText}`);
+                }
+                
                 const data = await response.json();
                 
                 if (data.error) {
                     throw new Error(data.error);
                 }
+                
+                console.log('Upload successful, received data:', data);
                 
                 // Display results
                 displaySummary(data.summary);
@@ -456,6 +531,7 @@
                 results.classList.add('show');
                 
             } catch (err) {
+                console.error('Upload error:', err);
                 error.textContent = `Error: ${err.message}`;
                 error.classList.add('show');
             } finally {
