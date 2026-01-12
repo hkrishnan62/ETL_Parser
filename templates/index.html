@@ -480,10 +480,22 @@
             }
             
             const formData = new FormData(this);
+            
+            // Ensure file is in FormData (some browsers need explicit add)
+            if (fileInput.files[0]) {
+                formData.set('file', fileInput.files[0]);
+            }
+            
             const useAI = document.getElementById('useAI').checked;
             formData.append('use_ai', useAI);
             
-            console.log('Uploading file:', file.name, 'Size:', file.size, 'Type:', file.type);
+            // Debug: Log FormData contents
+            console.log('=== Upload Debug Info ===');
+            console.log('File:', file.name, 'Size:', file.size, 'Type:', file.type);
+            console.log('Target Table:', formData.get('target_table'));
+            console.log('Use AI:', formData.get('use_ai'));
+            console.log('File in FormData:', formData.get('file') ? 'Yes' : 'No');
+            console.log('========================');
             
             const loading = document.getElementById('loading');
             const results = document.getElementById('results');
@@ -497,23 +509,29 @@
             submitBtn.disabled = true;
             
             try {
+                console.log('Sending request to /upload...');
                 const response = await fetch('/upload', {
                     method: 'POST',
                     body: formData
                 });
                 
+                console.log('Response received:', response.status, response.statusText);
+                
                 if (!response.ok) {
                     const errorText = await response.text();
+                    console.error('Server error response:', errorText);
                     throw new Error(`Server error: ${response.status} - ${errorText}`);
                 }
                 
                 const data = await response.json();
+                console.log('Response data:', data);
                 
                 if (data.error) {
+                    console.error('API error:', data.error);
                     throw new Error(data.error);
                 }
                 
-                console.log('Upload successful, received data:', data);
+                console.log('✓ Upload successful!');
                 
                 // Display results
                 displaySummary(data.summary);

@@ -34,22 +34,31 @@ def index():
 def upload_file():
     """Handle file upload and generate queries"""
     try:
+        print(f"=== Upload Request Received ===")
+        print(f"Files in request: {list(request.files.keys())}")
+        print(f"Form data: {dict(request.form)}")
+        
         # Check if file is present
         if 'file' not in request.files:
+            print("ERROR: No 'file' in request.files")
             return jsonify({'error': 'No file provided'}), 400
         
         file = request.files['file']
+        print(f"File received: {file.filename}, Content-Type: {file.content_type}")
         
         if file.filename == '':
+            print("ERROR: Empty filename")
             return jsonify({'error': 'No file selected'}), 400
         
         if not allowed_file(file.filename):
+            print(f"ERROR: Invalid file type: {file.filename}")
             return jsonify({'error': 'Invalid file type. Please upload a CSV or Excel file.'}), 400
         
         # Save uploaded file
         filename = secure_filename(file.filename)
         filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
         file.save(filepath)
+        print(f"File saved to: {filepath}")
         
         # Get form parameters
         # Extract source_table dynamically from transformations or use default
