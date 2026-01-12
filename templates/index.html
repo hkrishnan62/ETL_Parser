@@ -269,10 +269,10 @@
                     <h2>📄 Upload Mapping Document</h2>
                     <div class="form-group">
                         <div class="file-upload" id="fileUploadArea">
-                            <label class="file-upload-label">
+                            <label for="fileInput" class="file-upload-label" style="cursor: pointer; display: block; width: 100%; padding: 30px;">
                                 📁 Click to select CSV or Excel file or drag and drop
                             </label>
-                            <input type="file" id="fileInput" name="file" accept=".csv,.xlsx,.xls" required>
+                            <input type="file" id="fileInput" name="file" accept=".csv,.xlsx,.xls" required style="display: none;">
                             <div class="file-name" id="fileName"></div>
                         </div>
                     </div>
@@ -402,7 +402,7 @@
     </div>
     
     <script>
-        // File input handling with better feedback
+        // File input handling
         const fileInput = document.getElementById('fileInput');
         const fileName = document.getElementById('fileName');
         const fileUploadArea = document.getElementById('fileUploadArea');
@@ -414,30 +414,29 @@
                 fileName.textContent = `Selected: ${file.name} (${(file.size / 1024).toFixed(2)} KB)`;
                 fileName.style.color = '#667eea';
                 fileName.style.fontWeight = 'bold';
-                console.log('File selected:', file.name, 'Type:', file.type, 'Size:', file.size);
+                console.log('✓ File selected:', file.name, 'Type:', file.type, 'Size:', file.size);
             } else {
                 fileName.textContent = '';
             }
         });
         
-        // Make the entire upload area clickable
-        fileUploadArea.addEventListener('click', function(e) {
-            fileInput.click();
+        // Drag and drop functionality
+        ['dragover', 'dragenter'].forEach(eventName => {
+            fileUploadArea.addEventListener(eventName, function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                this.style.backgroundColor = '#e8f0fe';
+                this.style.borderColor = '#667eea';
+            });
         });
         
-        // Add drag and drop functionality
-        fileUploadArea.addEventListener('dragover', function(e) {
-            e.preventDefault();
-            e.stopPropagation();
-            this.style.backgroundColor = '#e8f0fe';
-            this.style.borderColor = '#667eea';
-        });
-        
-        fileUploadArea.addEventListener('dragleave', function(e) {
-            e.preventDefault();
-            e.stopPropagation();
-            this.style.backgroundColor = '';
-            this.style.borderColor = '#667eea';
+        ['dragleave', 'dragend'].forEach(eventName => {
+            fileUploadArea.addEventListener(eventName, function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                this.style.backgroundColor = '';
+                this.style.borderColor = '#667eea';
+            });
         });
         
         fileUploadArea.addEventListener('drop', function(e) {
@@ -446,11 +445,12 @@
             this.style.backgroundColor = '';
             this.style.borderColor = '#667eea';
             
-            if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
-                fileInput.files = e.dataTransfer.files;
-                // Trigger change event
-                const event = new Event('change', { bubbles: true });
-                fileInput.dispatchEvent(event);
+            const files = e.dataTransfer.files;
+            if (files && files.length > 0) {
+                fileInput.files = files;
+                // Trigger change event manually
+                fileInput.dispatchEvent(new Event('change', { bubbles: true }));
+                console.log('✓ File dropped:', files[0].name);
             }
         });
         
