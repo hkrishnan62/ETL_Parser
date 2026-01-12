@@ -78,9 +78,13 @@ class ETLValidator:
         if not self.mappings:
             return {}
         
+        # Extract source tables from transformations
+        source_tables = self.parser.extract_source_tables()
+        
         return {
             'total_mappings': len(self.mappings),
             'source_columns': self.parser.get_source_columns(),
             'target_columns': self.parser.get_target_columns(),
-            'transformations': self.parser.get_transformations()
+            'transformations': self.parser.get_transformations(),
+            'detected_source_tables': source_tables
         }

@@ -21,14 +21,17 @@ class MappingParser:
         
     def parse(self) -> List[Dict[str, Any]]:
         """
-        Parse the CSV file and extract mapping information
+        Parse the CSV or Excel file and extract mapping information
         
         Returns:
             List of mapping dictionaries
         """
         try:
-            # Read CSV file
-            df = pd.read_csv(self.csv_path)
+            # Read CSV or Excel file based on extension
+            if self.csv_path.endswith(('.xlsx', '.xls')):
+                df = pd.read_excel(self.csv_path)
+            else:
+                df = pd.read_csv(self.csv_path)
             
             # Clean column names (strip whitespace)
             df.columns = df.columns.str.strip()
@@ -45,7 +48,7 @@ class MappingParser:
             return self.mappings
             
         except Exception as e:
-            raise ValueError(f"Error parsing CSV file: {str(e)}")
+            raise ValueError(f"Error parsing file: {str(e)}")
     
     def get_source_columns(self) -> List[str]:
         """Get list of unique source columns"""
@@ -72,3 +75,23 @@ class MappingParser:
             if target and transformation:
                 transformations[target] = transformation
         return transformations
+    
+    def extract_source_tables(self) -> List[str]:
+        """
+        Extract unique source table names from transformations
+        
+        Returns:
+            List of unique source table names found in transformations
+        """
+        import re
+        tables = set()
+        
+        for mapping in self.mappings:
+            transformation = mapping.get('transformation', '')
+            if transformation and isinstance(transformation, str):
+                # Match patterns like "table_name.column_name"
+                # This regex finds words followed by a dot (table references)
+                matches = re.findall(r'(\w+)\.', transformation)
+                tables.update(matches)
+        
+        return sorted(list(tables))

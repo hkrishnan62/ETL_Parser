@@ -12,7 +12,7 @@ import traceback
 app = Flask(__name__, static_folder='static', static_url_path='')
 app.config['UPLOAD_FOLDER'] = 'uploads'
 app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024  # 16MB max file size
-app.config['ALLOWED_EXTENSIONS'] = {'csv'}
+app.config['ALLOWED_EXTENSIONS'] = {'csv', 'xlsx', 'xls'}
 
 # Create upload folder if it doesn't exist
 os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
@@ -44,7 +44,7 @@ def upload_file():
             return jsonify({'error': 'No file selected'}), 400
         
         if not allowed_file(file.filename):
-            return jsonify({'error': 'Invalid file type. Please upload a CSV file.'}), 400
+            return jsonify({'error': 'Invalid file type. Please upload a CSV or Excel file.'}), 400
         
         # Save uploaded file
         filename = secure_filename(file.filename)
@@ -52,8 +52,9 @@ def upload_file():
         file.save(filepath)
         
         # Get form parameters
-        source_table = request.form.get('source_table', 'source_table')
+        # Extract source_table dynamically from transformations or use default
         target_table = request.form.get('target_table', 'target_table')
+        source_table = 'source_table'  # Will be extracted from transformations
         source_schema = request.form.get('source_schema', '').strip() or None
         target_schema = request.form.get('target_schema', '').strip() or None
         query_type = request.form.get('query_type', 'both')
@@ -67,6 +68,16 @@ def upload_file():
             validator = ETLValidator(filepath)
         
         validator.load_mappings()
+        
+        # Get detected source tables from transformations
+        summary = validator.get_mapping_summary()
+        detected_tables = summary.get('detected_source_tables', [])
+        
+        # Use first detected source table or default
+        if detected_tables:
+            source_table = detected_tables[0]
+        else:
+            source_table = 'source_table'
         
         # Generate queries
         if use_ai and isinstance(validator, AIEnhancedValidator):
