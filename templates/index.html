@@ -597,9 +597,9 @@
                 Object.keys(aiAnalysis.optimization_notes).forEach(queryType => {
                     const notes = aiAnalysis.optimization_notes[queryType];
                     if (notes.suggestions && notes.suggestions.length > 0) {
-                        html += `<div style="margin: 10px 0;"><strong>${queryType}:</strong><ul>`;
+                        html += '<div style="margin: 10px 0;"><strong>' + queryType + ':</strong><ul>';
                         notes.suggestions.forEach(s => {
-                            html += `<li>${s}</li>`;
+                            html += '<li>' + s + '</li>';
                         });
                         html += '</ul></div>';
                     }
@@ -664,10 +664,10 @@
                 }
                 
                 let html = '<div style="background: #f5f5f5; padding: 15px; border-radius: 5px;">';
-                html += `<h4>Suggested Transformation:</h4>`;
-                html += `<pre style="background: #1e1e1e; color: #d4d4d4; padding: 15px; border-radius: 5px; overflow-x: auto;">${escapeHtml(data.transformation)}</pre>`;
-                html += `<p><strong>Explanation:</strong> ${data.explanation}</p>`;
-                html += `<p><strong>Confidence:</strong> <span style="color: ${data.confidence === 'high' ? 'green' : data.confidence === 'medium' ? 'orange' : 'red'}">${data.confidence}</span></p>`;
+                html += '<h4>Suggested Transformation:</h4>';
+                html += '<pre style="background: #1e1e1e; color: #d4d4d4; padding: 15px; border-radius: 5px; overflow-x: auto;">' + escapeHtml(data.transformation) + '</pre>';
+                html += '<p><strong>Explanation:</strong> ' + data.explanation + '</p>';
+                html += '<p><strong>Confidence:</strong> <span style="color: ' + (data.confidence === 'high' ? 'green' : data.confidence === 'medium' ? 'orange' : 'red') + '">' + data.confidence + '</span></p>';
                 html += '</div>';
                 
                 resultDiv.innerHTML = html;
@@ -710,17 +710,17 @@
                 }
                 
                 let html = '<div style="background: #f5f5f5; padding: 15px; border-radius: 5px;">';
-                html += `<h4>Generated Mapping (${data.mappings.length} rows):</h4>`;
+                html += '<h4>Generated Mapping (' + data.mappings.length + ' rows):</h4>';
                 html += '<div style="overflow-x: auto;"><table style="width: 100%; border-collapse: collapse;">';
                 html += '<tr style="background: #667eea; color: white;"><th style="padding: 8px; border: 1px solid #ddd;">Source</th><th style="padding: 8px; border: 1px solid #ddd;">Target</th><th style="padding: 8px; border: 1px solid #ddd;">Transformation</th><th style="padding: 8px; border: 1px solid #ddd;">Key</th></tr>';
                 
                 data.mappings.forEach(m => {
-                    html += `<tr style="border: 1px solid #ddd;">`;
-                    html += `<td style="padding: 8px; border: 1px solid #ddd;">${m.source_column || ''}</td>`;
-                    html += `<td style="padding: 8px; border: 1px solid #ddd;">${m.target_column}</td>`;
-                    html += `<td style="padding: 8px; border: 1px solid #ddd; font-family: monospace; font-size: 0.9em;">${m.transformation}</td>`;
-                    html += `<td style="padding: 8px; border: 1px solid #ddd;">${m.is_key}</td>`;
-                    html += `</tr>`;
+                    html += '<tr style="border: 1px solid #ddd;">';
+                    html += '<td style="padding: 8px; border: 1px solid #ddd;">' + (m.source_column || '') + '</td>';
+                    html += '<td style="padding: 8px; border: 1px solid #ddd;">' + m.target_column + '</td>';
+                    html += '<td style="padding: 8px; border: 1px solid #ddd; font-family: monospace; font-size: 0.9em;">' + m.transformation + '</td>';
+                    html += '<td style="padding: 8px; border: 1px solid #ddd;">' + m.is_key + '</td>';
+                    html += '</tr>';
                 });
                 
                 html += '</table></div>';
