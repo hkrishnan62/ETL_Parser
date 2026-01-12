@@ -411,7 +411,7 @@
         fileInput.addEventListener('change', function(e) {
             if (e.target.files && e.target.files.length > 0) {
                 const file = e.target.files[0];
-                fileName.textContent = `Selected: ${file.name} (${(file.size / 1024).toFixed(2)} KB)`;
+                fileName.textContent = 'Selected: ' + file.name + ' (' + (file.size / 1024).toFixed(2) + ' KB)';
                 fileName.style.color = '#667eea';
                 fileName.style.fontWeight = 'bold';
                 console.log('✓ File selected:', file.name, 'Type:', file.type, 'Size:', file.size);
@@ -520,7 +520,7 @@
                 if (!response.ok) {
                     const errorText = await response.text();
                     console.error('Server error response:', errorText);
-                    throw new Error(`Server error: ${response.status} - ${errorText}`);
+                    throw new Error('Server error: ' + response.status + ' - ' + errorText);
                 }
                 
                 const data = await response.json();
@@ -547,7 +547,7 @@
                 
             } catch (err) {
                 console.error('Upload error:', err);
-                error.textContent = `Error: ${err.message}`;
+                error.textContent = 'Error: ' + err.message;
                 error.classList.add('show');
             } finally {
                 loading.classList.remove('show');
@@ -672,7 +672,7 @@
                 
                 resultDiv.innerHTML = html;
             } catch (err) {
-                resultDiv.innerHTML = `<div class="error show">Error: ${err.message}</div>`;
+                resultDiv.innerHTML = '<div class="error show">Error: ' + err.message + '</div>';
             }
         }
         
@@ -729,7 +729,7 @@
                 
                 resultDiv.innerHTML = html;
             } catch (err) {
-                resultDiv.innerHTML = `<div class="error show">Error: ${err.message}</div>`;
+                resultDiv.innerHTML = '<div class="error show">Error: ' + err.message + '</div>';
             }
         }
                     <div class="query-header">
