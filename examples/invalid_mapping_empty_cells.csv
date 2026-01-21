@@ -1,0 +1,4 @@
+source_column,target_column,transformation
+customer_id,cust_id,
+first_name,fname,
+email,,LOWER(email)

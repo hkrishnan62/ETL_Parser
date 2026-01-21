@@ -1,0 +1,7 @@
+source_column,target_column,transformation,data_type,notes
+customer_id,cust_id,source.customer_id,INT,Primary key
+first_name,fname,source.first_name,VARCHAR,Direct mapping
+last_name,lname,source.last_name,VARCHAR,Direct mapping
+email,email_addr,LOWER(source.email),VARCHAR,Lowercase conversion
+created_date,created_at,CAST(source.created_date AS DATE),DATE,Type conversion
+status,order_status,CASE WHEN source.status = 'ACTIVE' THEN 'A' ELSE 'I' END,CHAR,Conditional mapping

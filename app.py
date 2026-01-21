@@ -41,18 +41,18 @@ def upload_file():
         # Check if file is present
         if 'file' not in request.files:
             print("ERROR: No 'file' in request.files")
-            return jsonify({'error': 'No file provided'}), 400
+            return jsonify({'error': '❌ No file provided. Please upload a mapping file.'}), 400
         
         file = request.files['file']
         print(f"File received: {file.filename}, Content-Type: {file.content_type}")
         
         if file.filename == '':
             print("ERROR: Empty filename")
-            return jsonify({'error': 'No file selected'}), 400
+            return jsonify({'error': '❌ No file selected. Please choose a file to upload.'}), 400
         
         if not allowed_file(file.filename):
             print(f"ERROR: Invalid file type: {file.filename}")
-            return jsonify({'error': 'Invalid file type. Please upload a CSV or Excel file.'}), 400
+            return jsonify({'error': '❌ Invalid file type. Please upload a CSV or Excel file (.csv, .xlsx, .xls).'}), 400
         
         # Save uploaded file
         filename = secure_filename(file.filename)
@@ -76,7 +76,14 @@ def upload_file():
         else:
             validator = ETLValidator(filepath)
         
-        validator.load_mappings()
+        # Load and validate mappings
+        try:
+            validator.load_mappings()
+        except ValueError as ve:
+            # Format validation errors with proper message
+            error_msg = str(ve)
+            print(f"Validation error: {error_msg}")
+            return jsonify({'error': error_msg}), 400
         
         # Get detected source tables from transformations
         summary = validator.get_mapping_summary()
@@ -127,7 +134,7 @@ def upload_file():
         error_trace = traceback.format_exc()
         print(f"Error processing file: {error_trace}")
         return jsonify({
-            'error': f'Error processing file: {str(e)}',
+            'error': f'❌ Error processing file: {str(e)}',
             'traceback': error_trace
         }), 500
 

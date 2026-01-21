@@ -17,85 +17,176 @@
         }
         
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', sans-serif;
+            background: #f8f9fa;
             min-height: 100vh;
-            padding: 20px;
+            color: #2c3e50;
+        }
+        
+        .navbar {
+            background: white;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            padding: 1rem 2rem;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        .navbar-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            font-size: 1.3em;
+            font-weight: 700;
+            color: #1a3a52;
+            letter-spacing: -0.5px;
+        }
+        
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            font-size: 0.9em;
+            color: #5a6c7d;
+        }
+        
+        .nav-links a {
+            text-decoration: none;
+            color: #5a6c7d;
+            transition: color 0.3s;
+        }
+        
+        .nav-links a:hover {
+            color: #1a3a52;
         }
         
         .container {
             max-width: 1200px;
             margin: 0 auto;
-            background: white;
-            border-radius: 10px;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
-            overflow: hidden;
+            padding: 2rem;
         }
         
-        .header {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        .hero {
+            background: linear-gradient(135deg, #1a3a52 0%, #2c5aa0 100%);
             color: white;
-            padding: 30px;
+            padding: 4rem 2rem;
+            border-radius: 8px;
+            margin-bottom: 3rem;
             text-align: center;
         }
         
-        .header h1 {
-            font-size: 2.5em;
-            margin-bottom: 10px;
+        .hero h1 {
+            font-size: 2.2em;
+            margin-bottom: 1rem;
+            font-weight: 700;
+            letter-spacing: -0.5px;
         }
         
-        .header p {
+        .hero p {
             font-size: 1.1em;
             opacity: 0.9;
+            max-width: 600px;
+            margin: 0 auto;
+            line-height: 1.6;
         }
         
         .content {
-            padding: 40px;
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 2rem;
+        }
+        
+        @media (max-width: 1024px) {
+            .content {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        .main-card {
+            background: white;
+            border-radius: 8px;
+            padding: 2rem;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        
+        .sidebar-card {
+            background: white;
+            border-radius: 8px;
+            padding: 1.5rem;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            height: fit-content;
         }
         
         .form-section {
-            margin-bottom: 30px;
+            margin-bottom: 2rem;
+        }
+        
+        .form-section h2 {
+            font-size: 1.1em;
+            font-weight: 600;
+            color: #1a3a52;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
         }
         
         .form-group {
-            margin-bottom: 20px;
+            margin-bottom: 1.5rem;
         }
         
         label {
             display: block;
-            font-weight: 600;
-            margin-bottom: 8px;
-            color: #333;
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+            color: #2c3e50;
+            font-size: 0.95em;
         }
         
         input[type="text"],
         input[type="file"],
-        select {
+        select,
+        textarea {
             width: 100%;
-            padding: 12px;
-            border: 2px solid #e0e0e0;
-            border-radius: 5px;
-            font-size: 1em;
-            transition: border-color 0.3s;
+            padding: 0.75rem;
+            border: 1px solid #d0d7e0;
+            border-radius: 4px;
+            font-size: 0.95em;
+            font-family: inherit;
+            transition: border-color 0.3s, box-shadow 0.3s;
+            background: white;
         }
         
         input[type="text"]:focus,
-        select:focus {
+        select:focus,
+        textarea:focus {
             outline: none;
-            border-color: #667eea;
+            border-color: #2c5aa0;
+            box-shadow: 0 0 0 3px rgba(44, 90, 160, 0.1);
         }
         
         .file-upload {
-            border: 2px dashed #667eea;
-            border-radius: 5px;
-            padding: 30px;
+            border: 2px dashed #d0d7e0;
+            border-radius: 6px;
+            padding: 2rem;
             text-align: center;
             cursor: pointer;
-            transition: background-color 0.3s;
+            transition: all 0.3s;
+            background: #f8f9fa;
         }
         
         .file-upload:hover {
-            background-color: #f5f5f5;
+            background-color: #f0f2f5;
+            border-color: #2c5aa0;
+        }
+        
+        .file-upload.active {
+            background-color: #e3eef9;
+            border-color: #2c5aa0;
         }
         
         .file-upload input[type="file"] {
@@ -104,40 +195,69 @@
         
         .file-upload-label {
             cursor: pointer;
-            color: #667eea;
-            font-weight: 600;
+            color: #2c5aa0;
+            font-weight: 500;
+            display: block;
+            width: 100%;
         }
         
         .file-name {
-            margin-top: 10px;
-            color: #666;
+            margin-top: 0.75rem;
+            color: #5a6c7d;
+            font-size: 0.9em;
             font-style: italic;
         }
         
         .btn {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: #2c5aa0;
             color: white;
-            padding: 15px 40px;
+            padding: 0.75rem 1.5rem;
             border: none;
-            border-radius: 5px;
-            font-size: 1.1em;
-            font-weight: 600;
+            border-radius: 4px;
+            font-size: 0.95em;
+            font-weight: 500;
             cursor: pointer;
-            transition: transform 0.2s, box-shadow 0.2s;
+            transition: all 0.3s;
+            display: inline-block;
         }
         
         .btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+            background: #1a3a52;
+            box-shadow: 0 4px 12px rgba(44, 90, 160, 0.15);
+            transform: translateY(-1px);
         }
         
         .btn:disabled {
             opacity: 0.6;
             cursor: not-allowed;
+            transform: none;
+        }
+        
+        .btn-secondary {
+            background: #5a6c7d;
+        }
+        
+        .btn-secondary:hover {
+            background: #3f4a57;
+        }
+        
+        .btn-accent {
+            background: #00a2e8;
+        }
+        
+        .btn-accent:hover {
+            background: #0088c4;
+        }
+        
+        .button-group {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1.5rem;
+            flex-wrap: wrap;
         }
         
         .results {
-            margin-top: 30px;
+            margin-top: 2rem;
             display: none;
         }
         
@@ -146,81 +266,131 @@
         }
         
         .summary {
-            background: #f8f9fa;
-            padding: 20px;
-            border-radius: 5px;
-            margin-bottom: 20px;
+            background: #f0f4f8;
+            padding: 1.5rem;
+            border-radius: 6px;
+            margin-bottom: 2rem;
+            border-left: 4px solid #2c5aa0;
         }
         
         .summary h3 {
-            color: #667eea;
-            margin-bottom: 15px;
+            color: #1a3a52;
+            margin-bottom: 1rem;
+            font-size: 1.1em;
         }
         
         .summary-item {
-            margin-bottom: 10px;
-            padding: 10px;
+            margin-bottom: 0.75rem;
+            padding: 0.75rem;
             background: white;
             border-radius: 3px;
+            border-left: 2px solid #d0d7e0;
+            font-size: 0.95em;
+        }
+        
+        .summary-item strong {
+            color: #1a3a52;
         }
         
         .query-section {
-            margin-bottom: 30px;
+            background: white;
+            padding: 1.5rem;
+            border-radius: 6px;
+            margin-bottom: 2rem;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
         }
         
         .query-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 10px;
+            margin-bottom: 1rem;
         }
         
         .query-header h3 {
-            color: #333;
+            color: #1a3a52;
+            font-size: 1em;
         }
         
         .copy-btn {
-            background: #28a745;
+            background: #00a2e8;
             color: white;
-            padding: 8px 20px;
+            padding: 0.5rem 1rem;
             border: none;
-            border-radius: 3px;
+            border-radius: 4px;
             cursor: pointer;
-            font-size: 0.9em;
+            font-size: 0.85em;
+            transition: all 0.3s;
         }
         
         .copy-btn:hover {
-            background: #218838;
+            background: #0088c4;
         }
         
         .query-box {
             background: #1e1e1e;
             color: #d4d4d4;
-            padding: 20px;
-            border-radius: 5px;
+            padding: 1.5rem;
+            border-radius: 4px;
             overflow-x: auto;
             font-family: 'Courier New', monospace;
-            font-size: 0.9em;
-            line-height: 1.5;
+            font-size: 0.85em;
+            line-height: 1.6;
             white-space: pre;
+            border: 1px solid #333;
         }
         
         .error {
-            background: #f8d7da;
-            color: #721c24;
-            padding: 15px;
-            border-radius: 5px;
-            margin-top: 20px;
+            background: #fef2f2;
+            color: #b42318;
+            padding: 1rem;
+            border-radius: 4px;
+            margin-top: 1rem;
             display: none;
+            border-left: 4px solid #dc2626;
+            font-size: 0.95em;
+            line-height: 1.6;
         }
         
         .error.show {
             display: block;
         }
         
+        .error strong {
+            color: #7f1d1d;
+            display: block;
+            margin-bottom: 0.5rem;
+        }
+        
+        .error p {
+            margin: 0.5rem 0;
+        }
+        
+        .error code {
+            background: #fee2e2;
+            padding: 0.2rem 0.4rem;
+            border-radius: 2px;
+            font-family: monospace;
+            font-size: 0.9em;
+        }
+        
+        .success {
+            background: #f0fdf4;
+            color: #15803d;
+            padding: 1rem;
+            border-radius: 4px;
+            margin-top: 1rem;
+            display: none;
+            border-left: 4px solid #22c55e;
+        }
+        
+        .success.show {
+            display: block;
+        }
+        
         .loading {
             text-align: center;
-            padding: 20px;
+            padding: 2rem;
             display: none;
         }
         
@@ -229,13 +399,13 @@
         }
         
         .spinner {
-            border: 4px solid #f3f3f3;
-            border-top: 4px solid #667eea;
+            border: 3px solid #f0f2f5;
+            border-top: 3px solid #2c5aa0;
             border-radius: 50%;
             width: 40px;
             height: 40px;
             animation: spin 1s linear infinite;
-            margin: 0 auto;
+            margin: 0 auto 1rem;
         }
         
         @keyframes spin {
@@ -246,33 +416,100 @@
         .grid-2 {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 20px;
+            gap: 1.5rem;
         }
         
         @media (max-width: 768px) {
             .grid-2 {
                 grid-template-columns: 1fr;
             }
+            
+            .hero h1 {
+                font-size: 1.8em;
+            }
+            
+            .nav-links {
+                display: none;
+            }
+        }
+        
+        .badge {
+            display: inline-block;
+            background: #e3eef9;
+            color: #2c5aa0;
+            padding: 0.25rem 0.75rem;
+            border-radius: 12px;
+            font-size: 0.8em;
+            font-weight: 500;
+        }
+        
+        .ai-analysis {
+            background: linear-gradient(135deg, #f0f4f8 0%, #e3eef9 100%);
+            padding: 1.5rem;
+            border-radius: 6px;
+            margin-bottom: 2rem;
+            border-left: 4px solid #00a2e8;
+        }
+        
+        .ai-analysis h3 {
+            color: #2c5aa0;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .feature-list {
+            list-style: none;
+            padding: 0;
+        }
+        
+        .feature-list li {
+            padding: 0.5rem 0;
+            color: #5a6c7d;
+            font-size: 0.9em;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .feature-list li:before {
+            content: "✓";
+            color: #00a2e8;
+            font-weight: bold;
         }
     </style>
 </head>
 <body>
+    <div class="navbar">
+        <div class="navbar-content">
+            <div class="logo">ETL Parser</div>
+            <div class="nav-links">
+                <a href="#features">Features</a>
+                <a href="#documentation">Documentation</a>
+            </div>
+        </div>
+    </div>
+    
     <div class="container">
-        <div class="header">
-            <h1>🔄 ETL Mapping Validator</h1>
-            <p>Convert SQL mapping documents into transformation validation queries</p>
+        <div class="hero">
+            <h1>ETL Mapping Validator</h1>
+            <p>Convert your ETL mapping documents into validation queries instantly. Validate data transformations, ensure quality, and generate production-ready SQL.</p>
         </div>
         
         <div class="content">
-            <form id="uploadForm">
+            <div class="main-card">
+                <form id="uploadForm">
                 <div class="form-section">
                     <h2>📄 Upload Mapping Document</h2>
                     <div class="form-group">
                         <div class="file-upload" id="fileUploadArea">
-                            <label for="fileInput" class="file-upload-label" style="cursor: pointer; display: block; width: 100%; padding: 30px;">
-                                📁 Click to select CSV or Excel file or drag and drop
+                            <label for="fileInput" class="file-upload-label">
+                                <div style="font-size: 1.5rem; margin-bottom: 0.5rem;">⬆️</div>
+                                <div style="font-weight: 600; margin-bottom: 0.25rem;">Click to upload or drag and drop</div>
+                                <div style="font-size: 0.9em; color: #5a6c7d;">CSV or Excel files (XLS, XLSX)</div>
                             </label>
-                            <input type="file" id="fileInput" name="file" accept=".csv,.xlsx,.xls" required style="display: none;">
+                            <input type="file" id="fileInput" name="file" accept=".csv,.xlsx,.xls" required>
                             <div class="file-name" id="fileName"></div>
                         </div>
                     </div>
@@ -287,13 +524,25 @@
                         </div>
                         
                         <div class="form-group">
-                            <label for="sourceSchema">Source Schema (Optional)</label>
+                            <label for="sourceSchema">Source Schema <span class="badge">Optional</span></label>
                             <input type="text" id="sourceSchema" name="source_schema" placeholder="e.g., source_db">
                         </div>
                         
                         <div class="form-group">
-                            <label for="targetSchema">Target Schema (Optional)</label>
+                            <label for="targetSchema">Target Schema <span class="badge">Optional</span></label>
                             <input type="text" id="targetSchema" name="target_schema" placeholder="e.g., target_db">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="databaseType">Database Type</label>
+                            <select id="databaseType" name="database_type">
+                                <option value="generic">Generic SQL</option>
+                                <option value="postgres">PostgreSQL</option>
+                                <option value="mysql">MySQL</option>
+                                <option value="oracle">Oracle</option>
+                                <option value="sqlserver">SQL Server</option>
+                                <option value="snowflake">Snowflake</option>
+                            </select>
                         </div>
                     </div>
                     
@@ -307,97 +556,168 @@
                     </div>
                     
                     <div class="form-group">
-                        <label for="databaseType">Database Type</label>
-                        <select id="databaseType" name="database_type">
-                            <option value="generic">Generic SQL</option>
-                            <option value="postgres">PostgreSQL</option>
-                            <option value="mysql">MySQL</option>
-                            <option value="oracle">Oracle</option>
-                            <option value="sqlserver">SQL Server</option>
-                            <option value="snowflake">Snowflake</option>
-                        </select>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label style="display: flex; align-items: center; cursor: pointer;">
-                            <input type="checkbox" id="useAI" name="use_ai" style="width: auto; margin-right: 10px;">
-                            <span>🤖 Use AI Optimization & Analysis</span>
+                        <label style="display: flex; align-items: center; cursor: pointer; font-weight: 500;">
+                            <input type="checkbox" id="useAI" name="use_ai" style="width: auto; margin-right: 0.75rem;">
+                            <span>🤖 Enable AI Optimization & Analysis</span>
                         </label>
-                        <small style="color: #666; margin-top: 5px; display: block;">
-                            Enable AI-powered query optimization and transformation suggestions (requires API key)
+                        <small style="color: #5a6c7d; margin-top: 0.5rem; display: block; margin-left: 1.75rem;">
+                            AI-powered query optimization and transformation suggestions (requires API key)
                         </small>
                     </div>
                 </div>
                 
-                <button type="submit" class="btn" id="submitBtn">Generate SQL Queries</button>
+                <button type="submit" class="btn" id="submitBtn" style="width: 100%; padding: 0.875rem;">Generate SQL Queries</button>
                 
-                <div style="margin-top: 20px; text-align: center;">
-                    <button type="button" class="btn" onclick="showAISuggestion()" style="background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);">
-                        🤖 Get AI Transformation Suggestion
+                <div class="button-group" style="width: 100%;">
+                    <button type="button" class="btn btn-accent" onclick="showAISuggestion()" style="flex: 1;">
+                        🤖 AI Suggestions
                     </button>
-                    <button type="button" class="btn" onclick="showNLMapping()" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">
-                        💬 Generate Mapping from Description
+                    <button type="button" class="btn btn-secondary" onclick="showNLMapping()" style="flex: 1;">
+                        💬 NL to CSV
                     </button>
                 </div>
             </form>
-            
-            <div class="loading" id="loading">
-                <div class="spinner"></div>
-                <p style="margin-top: 15px;">Processing mapping document...</p>
+                
+                <div class="loading" id="loading">
+                    <div class="spinner"></div>
+                    <p>Processing your mapping document...</p>
+                </div>
+                
+                <div class="error" id="error"></div>
+                
+                <div class="results" id="results">
+                    <div class="summary" id="summary"></div>
+                    <div id="aiAnalysis" style="display: none;"></div>
+                    <div id="queries"></div>
+                </div>
             </div>
             
-            <div class="error" id="error"></div>
-            
-            <div class="results" id="results">
-                <div class="summary" id="summary"></div>
-                <div id="aiAnalysis" style="display: none;"></div>
-                <div id="queries"></div>
+            <div class="sidebar-card">
+                <h3 style="color: #1a3a52; margin-bottom: 1rem; font-size: 1em;">✨ Features</h3>
+                <ul class="feature-list">
+                    <li>Support for CSV & Excel formats</li>
+                    <li>6 Database types</li>
+                    <li>AI-powered optimization</li>
+                    <li>Instant SQL generation</li>
+                    <li>Query validation</li>
+                    <li>Copy to clipboard</li>
+                </ul>
+                
+                <hr style="margin: 1.5rem 0; border: none; border-top: 1px solid #d0d7e0;">
+                
+                <h3 style="color: #1a3a52; margin-bottom: 1rem; font-size: 0.95em;">📋 Required Format</h3>
+                <div style="background: #f8f9fa; padding: 1rem; border-radius: 4px; font-size: 0.85em;">
+                    <p style="margin-bottom: 0.75rem; color: #2c3e50;"><strong>Your mapping file must have:</strong></p>
+                    <ul class="feature-list" style="font-size: 0.9em;">
+                        <li><code style="background: white; padding: 0.2rem 0.4rem;">source_column</code></li>
+                        <li><code style="background: white; padding: 0.2rem 0.4rem;">target_column</code></li>
+                        <li><code style="background: white; padding: 0.2rem 0.4rem;">transformation</code></li>
+                    </ul>
+                    <p style="margin-top: 0.75rem; color: #5a6c7d; font-size: 0.85em;">
+                        💡 <a href="javascript:showFormatGuide()" style="color: #2c5aa0; text-decoration: none; font-weight: 500;">View example →</a>
+                    </p>
+                </div>
             </div>
         </div>
     </div>
     
     <!-- AI Suggestion Modal -->
     <div id="aiModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000;">
-        <div style="background: white; max-width: 600px; margin: 50px auto; padding: 30px; border-radius: 10px; max-height: 80vh; overflow-y: auto;">
-            <h2>🤖 AI Transformation Suggestion</h2>
-            <div style="margin: 20px 0;">
-                <label>Source Column:</label>
-                <input type="text" id="aiSourceCol" style="width: 100%; padding: 10px; margin: 5px 0;">
+        <div style="background: white; max-width: 600px; margin: 50px auto; padding: 2rem; border-radius: 8px; max-height: 80vh; overflow-y: auto;">
+            <h2 style="color: #1a3a52; margin-bottom: 1.5rem;">🤖 AI Transformation Suggestion</h2>
+            <div style="margin: 1.5rem 0;">
+                <label style="display: block; font-weight: 500; margin-bottom: 0.5rem; color: #2c3e50;">Source Column:</label>
+                <input type="text" id="aiSourceCol" style="width: 100%; padding: 0.75rem; margin-bottom: 1rem; border: 1px solid #d0d7e0; border-radius: 4px;">
                 
-                <label>Target Column:</label>
-                <input type="text" id="aiTargetCol" style="width: 100%; padding: 10px; margin: 5px 0;">
+                <label style="display: block; font-weight: 500; margin-bottom: 0.5rem; color: #2c3e50;">Target Column:</label>
+                <input type="text" id="aiTargetCol" style="width: 100%; padding: 0.75rem; margin-bottom: 1rem; border: 1px solid #d0d7e0; border-radius: 4px;">
                 
-                <label>Source Type (optional):</label>
-                <input type="text" id="aiSourceType" placeholder="e.g., VARCHAR" style="width: 100%; padding: 10px; margin: 5px 0;">
+                <label style="display: block; font-weight: 500; margin-bottom: 0.5rem; color: #2c3e50;">Source Type (optional):</label>
+                <input type="text" id="aiSourceType" placeholder="e.g., VARCHAR" style="width: 100%; padding: 0.75rem; margin-bottom: 1rem; border: 1px solid #d0d7e0; border-radius: 4px;">
                 
-                <label>Target Type (optional):</label>
-                <input type="text" id="aiTargetType" placeholder="e.g., DATE" style="width: 100%; padding: 10px; margin: 5px 0;">
+                <label style="display: block; font-weight: 500; margin-bottom: 0.5rem; color: #2c3e50;">Target Type (optional):</label>
+                <input type="text" id="aiTargetType" placeholder="e.g., DATE" style="width: 100%; padding: 0.75rem; margin-bottom: 1.5rem; border: 1px solid #d0d7e0; border-radius: 4px;">
             </div>
-            <div style="text-align: right;">
-                <button onclick="closeAIModal()" style="padding: 10px 20px; margin-right: 10px;">Cancel</button>
+            <div style="text-align: right; display: flex; gap: 1rem;">
+                <button onclick="closeAIModal()" style="padding: 0.75rem 1.5rem; border: 1px solid #d0d7e0; border-radius: 4px; background: white; cursor: pointer; color: #2c3e50;">Cancel</button>
                 <button onclick="getAISuggestion()" class="btn">Get Suggestion</button>
             </div>
-            <div id="aiSuggestionResult" style="margin-top: 20px;"></div>
+            <div id="aiSuggestionResult" style="margin-top: 1.5rem;"></div>
         </div>
     </div>
     
     <!-- NL Mapping Modal -->
     <div id="nlModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000;">
-        <div style="background: white; max-width: 700px; margin: 50px auto; padding: 30px; border-radius: 10px; max-height: 80vh; overflow-y: auto;">
-            <h2>💬 Generate Mapping from Description</h2>
-            <p style="color: #666; margin-bottom: 20px;">
+        <div style="background: white; max-width: 700px; margin: 50px auto; padding: 2rem; border-radius: 8px; max-height: 80vh; overflow-y: auto;">
+            <h2 style="color: #1a3a52; margin-bottom: 1rem;">💬 Generate Mapping from Description</h2>
+            <p style="color: #5a6c7d; margin-bottom: 1.5rem; line-height: 1.6;">
                 Describe your ETL mapping in plain English, and AI will generate the CSV mapping for you.
             </p>
-            <div style="margin: 20px 0;">
-                <label>Description:</label>
-                <textarea id="nlDescription" rows="6" style="width: 100%; padding: 10px; margin: 5px 0;" 
+            <div style="margin: 1.5rem 0;">
+                <label style="display: block; font-weight: 500; margin-bottom: 0.5rem; color: #2c3e50;">Description:</label>
+                <textarea id="nlDescription" rows="6" style="width: 100%; padding: 0.75rem; margin-bottom: 1.5rem; border: 1px solid #d0d7e0; border-radius: 4px; font-family: inherit;" 
                     placeholder="Example: Map customer ID directly as a key, combine first and last name into full_name, convert email to lowercase, extract year from order_date"></textarea>
             </div>
-            <div style="text-align: right;">
-                <button onclick="closeNLModal()" style="padding: 10px 20px; margin-right: 10px;">Cancel</button>
+            <div style="text-align: right; display: flex; gap: 1rem;">
+                <button onclick="closeNLModal()" style="padding: 0.75rem 1.5rem; border: 1px solid #d0d7e0; border-radius: 4px; background: white; cursor: pointer; color: #2c3e50;">Cancel</button>
                 <button onclick="generateFromNL()" class="btn">Generate Mapping</button>
             </div>
-            <div id="nlMappingResult" style="margin-top: 20px;"></div>
+            <div id="nlMappingResult" style="margin-top: 1.5rem;"></div>
+        </div>
+    </div>
+    
+    <!-- Format Guide Modal -->
+    <div id="formatGuideModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000; overflow-y: auto;">
+        <div style="background: white; max-width: 800px; margin: 30px auto; padding: 2rem; border-radius: 8px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+                <h2 style="color: #1a3a52; margin: 0;">📋 Mapping File Format Guide</h2>
+                <button onclick="closeFormatGuide()" style="background: none; border: none; font-size: 1.5rem; cursor: pointer; color: #5a6c7d;">✕</button>
+            </div>
+            
+            <div style="background: #f0f4f8; padding: 1.5rem; border-radius: 6px; margin-bottom: 1.5rem;">
+                <h3 style="color: #2c5aa0; margin-top: 0; margin-bottom: 1rem;">✅ Required Columns</h3>
+                <p style="color: #2c3e50; margin: 0.5rem 0;">Your mapping file MUST contain exactly 3 required columns:</p>
+                <table style="width: 100%; margin-top: 1rem; border-collapse: collapse;">
+                    <tr style="background: #2c5aa0; color: white;">
+                        <th style="padding: 0.75rem; text-align: left; border: 1px solid #d0d7e0;">Column Name</th>
+                        <th style="padding: 0.75rem; text-align: left; border: 1px solid #d0d7e0;">Description</th>
+                        <th style="padding: 0.75rem; text-align: left; border: 1px solid #d0d7e0;">Example</th>
+                    </tr>
+                    <tr style="background: white; border: 1px solid #d0d7e0;">
+                        <td style="padding: 0.75rem; border: 1px solid #d0d7e0;"><code style="background: #f0f4f8; padding: 0.25rem 0.5rem;">source_column</code></td>
+                        <td style="padding: 0.75rem; border: 1px solid #d0d7e0;">Source table column name</td>
+                        <td style="padding: 0.75rem; border: 1px solid #d0d7e0;"><code>customer_id</code></td>
+                    </tr>
+                    <tr style="background: #f8f9fa; border: 1px solid #d0d7e0;">
+                        <td style="padding: 0.75rem; border: 1px solid #d0d7e0;"><code style="background: #f0f4f8; padding: 0.25rem 0.5rem;">target_column</code></td>
+                        <td style="padding: 0.75rem; border: 1px solid #d0d7e0;">Target table column name</td>
+                        <td style="padding: 0.75rem; border: 1px solid #d0d7e0;"><code>cust_id</code></td>
+                    </tr>
+                    <tr style="background: white; border: 1px solid #d0d7e0;">
+                        <td style="padding: 0.75rem; border: 1px solid #d0d7e0;"><code style="background: #f0f4f8; padding: 0.25rem 0.5rem;">transformation</code></td>
+                        <td style="padding: 0.75rem; border: 1px solid #d0d7e0;">SQL transformation logic</td>
+                        <td style="padding: 0.75rem; border: 1px solid #d0d7e0;"><code>source.customer_id</code></td>
+                    </tr>
+                </table>
+            </div>
+            
+            <div style="background: #f8f9fa; padding: 1.5rem; border-radius: 6px; margin-bottom: 1.5rem;">
+                <h3 style="color: #1a3a52; margin-top: 0; margin-bottom: 1rem;">📝 Example CSV Format</h3>
+                <pre style="background: white; border: 1px solid #d0d7e0; padding: 1rem; border-radius: 4px; overflow-x: auto; font-size: 0.85em;">source_column,target_column,transformation
+customer_id,cust_id,source.customer_id
+first_name,fname,source.first_name
+email,email_addr,LOWER(source.email)
+created_date,created_at,CAST(source.created_date AS DATE)
+status,order_status,CASE WHEN source.status = 'ACTIVE' THEN 'A' ELSE 'I' END</pre>
+            </div>
+            
+            <div style="background: #fef3c7; padding: 1rem; border-radius: 6px; border-left: 4px solid #f59e0b; margin-bottom: 1.5rem;">
+                <p style="margin: 0; color: #92400e;"><strong>⚠️ Important:</strong> All required columns must have values for each row. Empty cells in any required column will cause validation errors.</p>
+            </div>
+            
+            <div style="text-align: right;">
+                <button onclick="closeFormatGuide()" class="btn">Got it!</button>
+            </div>
         </div>
     </div>
     
@@ -411,12 +731,14 @@
         fileInput.addEventListener('change', function(e) {
             if (e.target.files && e.target.files.length > 0) {
                 const file = e.target.files[0];
-                fileName.textContent = 'Selected: ' + file.name + ' (' + (file.size / 1024).toFixed(2) + ' KB)';
-                fileName.style.color = '#667eea';
+                fileName.textContent = '✓ Selected: ' + file.name + ' (' + (file.size / 1024).toFixed(2) + ' KB)';
+                fileName.style.color = '#22c55e';
                 fileName.style.fontWeight = 'bold';
+                fileUploadArea.classList.add('active');
                 console.log('✓ File selected:', file.name, 'Type:', file.type, 'Size:', file.size);
             } else {
                 fileName.textContent = '';
+                fileUploadArea.classList.remove('active');
             }
         });
         
@@ -425,8 +747,8 @@
             fileUploadArea.addEventListener(eventName, function(e) {
                 e.preventDefault();
                 e.stopPropagation();
-                this.style.backgroundColor = '#e8f0fe';
-                this.style.borderColor = '#667eea';
+                this.style.backgroundColor = '#e3eef9';
+                this.style.borderColor = '#2c5aa0';
             });
         });
         
@@ -435,7 +757,7 @@
                 e.preventDefault();
                 e.stopPropagation();
                 this.style.backgroundColor = '';
-                this.style.borderColor = '#667eea';
+                this.style.borderColor = '#d0d7e0';
             });
         });
         
@@ -443,7 +765,7 @@
             e.preventDefault();
             e.stopPropagation();
             this.style.backgroundColor = '';
-            this.style.borderColor = '#667eea';
+            this.style.borderColor = '#d0d7e0';
             
             const files = e.dataTransfer.files;
             if (files && files.length > 0) {
@@ -547,8 +869,28 @@
                 
             } catch (err) {
                 console.error('Upload error:', err);
-                error.textContent = 'Error: ' + err.message;
-                error.classList.add('show');
+                const errorDiv = document.getElementById('error');
+                
+                // Format the error message, preserving line breaks
+                let errorContent = err.message;
+                
+                // Replace newlines with <br> and format the message
+                errorContent = errorContent
+                    .split('\n')
+                    .map(line => line.trim())
+                    .filter(line => line.length > 0)
+                    .join('<br>');
+                
+                // Add emphasis to missing columns if present
+                errorContent = errorContent.replace(/missing required columns: (.*?)(Available|Found)/gi, (match, cols, next) => {
+                    return `<strong>❌ Missing required columns: <code>${cols.trim()}</code></strong><br>${next}`;
+                });
+                
+                // Add heading for found columns
+                errorContent = errorContent.replace(/Found columns:/gi, '<strong style="margin-top: 0.5rem; display: block;">📊 Found columns:</strong>');
+                
+                errorDiv.innerHTML = errorContent;
+                errorDiv.classList.add('show');
             } finally {
                 loading.classList.remove('show');
                 submitBtn.disabled = false;
@@ -560,23 +902,23 @@
             let html = `
                 <h3>📊 Mapping Summary</h3>
                 <div class="summary-item">
-                    <strong>Total Mappings:</strong> ${summary.total_mappings}
+                    <strong>Total Mappings:</strong> <span style="color: #2c5aa0; font-weight: 600;">${summary.total_mappings}</span>
                 </div>`;
             
             // Display detected source tables
             if (summary.detected_source_tables && summary.detected_source_tables.length > 0) {
                 html += `
                 <div class="summary-item">
-                    <strong>Detected Source Tables:</strong> ${summary.detected_source_tables.join(', ')}
+                    <strong>Detected Source Tables:</strong> <span style="color: #5a6c7d;">${summary.detected_source_tables.join(', ')}</span>
                 </div>`;
             }
             
             html += `
                 <div class="summary-item">
-                    <strong>Source Columns:</strong> ${summary.source_columns.length} (${summary.source_columns.join(', ')})
+                    <strong>Source Columns:</strong> <span style="font-weight: 500;">${summary.source_columns.length}</span> (${summary.source_columns.join(', ')})
                 </div>
                 <div class="summary-item">
-                    <strong>Target Columns:</strong> ${summary.target_columns.length} (${summary.target_columns.join(', ')})
+                    <strong>Target Columns:</strong> <span style="font-weight: 500;">${summary.target_columns.length}</span> (${summary.target_columns.join(', ')})
                 </div>
             `;
             
@@ -590,16 +932,16 @@
                 return;
             }
             
-            let html = '<div style="background: #e3f2fd; padding: 20px; border-radius: 5px; margin-bottom: 20px;">';
-            html += '<h3 style="color: #1976d2;">🤖 AI Analysis</h3>';
+            let html = '<div class="ai-analysis">';
+            html += '<h3>🤖 AI Analysis & Recommendations</h3>';
             
             if (aiAnalysis.optimization_notes) {
                 Object.keys(aiAnalysis.optimization_notes).forEach(queryType => {
                     const notes = aiAnalysis.optimization_notes[queryType];
                     if (notes.suggestions && notes.suggestions.length > 0) {
-                        html += '<div style="margin: 10px 0;"><strong>' + queryType + ':</strong><ul>';
+                        html += '<div style="margin: 1rem 0;"><strong style="color: #2c5aa0;">' + queryType.replace(/_/g, ' ').toUpperCase() + ':</strong><ul class="feature-list" style="margin-top: 0.5rem;">';
                         notes.suggestions.forEach(s => {
-                            html += '<li>' + s + '</li>';
+                            html += '<li style="padding: 0.25rem 0;">' + s + '</li>';
                         });
                         html += '</ul></div>';
                     }
@@ -619,7 +961,7 @@
                 const title = key.split('_').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
                 const querySection = document.createElement('div');
                 querySection.className = 'query-section';
-                querySection.innerHTML = '<div class="query-header"><h3>' + title + '</h3><button class="copy-btn" onclick="copyQuery(this)">📋 Copy Query</button></div><div class="query-box">' + escapeHtml(queries[key]) + '</div>';
+                querySection.innerHTML = '<div class="query-header"><h3>' + title + '</h3><button class="copy-btn" onclick="copyQuery(this)">📋 Copy</button></div><div class="query-box">' + escapeHtml(queries[key]) + '</div>';
                 queriesDiv.appendChild(querySection);
             });
         }
@@ -632,6 +974,14 @@
         function closeAIModal() {
             document.getElementById('aiModal').style.display = 'none';
             document.getElementById('aiSuggestionResult').innerHTML = '';
+        }
+        
+        function showFormatGuide() {
+            document.getElementById('formatGuideModal').style.display = 'block';
+        }
+        
+        function closeFormatGuide() {
+            document.getElementById('formatGuideModal').style.display = 'none';
         }
         
         async function getAISuggestion() {
@@ -666,11 +1016,11 @@
                     throw new Error(data.error);
                 }
                 
-                let html = '<div style="background: #f5f5f5; padding: 15px; border-radius: 5px;">';
-                html += '<h4>Suggested Transformation:</h4>';
-                html += '<pre style="background: #1e1e1e; color: #d4d4d4; padding: 15px; border-radius: 5px; overflow-x: auto;">' + escapeHtml(data.transformation) + '</pre>';
-                html += '<p><strong>Explanation:</strong> ' + data.explanation + '</p>';
-                html += '<p><strong>Confidence:</strong> <span style="color: ' + (data.confidence === 'high' ? 'green' : data.confidence === 'medium' ? 'orange' : 'red') + '">' + data.confidence + '</span></p>';
+                let html = '<div style="background: #f5f5f5; padding: 1rem; border-radius: 6px;">';
+                html += '<h4 style="color: #1a3a52; margin-bottom: 1rem;">Suggested Transformation:</h4>';
+                html += '<pre style="background: #1e1e1e; color: #d4d4d4; padding: 1rem; border-radius: 4px; overflow-x: auto; font-size: 0.85em; line-height: 1.6;">' + escapeHtml(data.transformation) + '</pre>';
+                html += '<p style="margin-top: 1rem;"><strong style="color: #1a3a52;">Explanation:</strong> <span style="color: #5a6c7d;">' + data.explanation + '</span></p>';
+                html += '<p style="margin-top: 0.5rem;"><strong style="color: #1a3a52;">Confidence:</strong> <span style="color: ' + (data.confidence === 'high' ? '#22c55e' : data.confidence === 'medium' ? '#f59e0b' : '#ef4444') + '; font-weight: 600;">' + data.confidence.toUpperCase() + '</span></p>';
                 html += '</div>';
                 
                 resultDiv.innerHTML = html;
@@ -712,22 +1062,23 @@
                     throw new Error(data.error);
                 }
                 
-                let html = '<div style="background: #f5f5f5; padding: 15px; border-radius: 5px;">';
-                html += '<h4>Generated Mapping (' + data.mappings.length + ' rows):</h4>';
-                html += '<div style="overflow-x: auto;"><table style="width: 100%; border-collapse: collapse;">';
-                html += '<tr style="background: #667eea; color: white;"><th style="padding: 8px; border: 1px solid #ddd;">Source</th><th style="padding: 8px; border: 1px solid #ddd;">Target</th><th style="padding: 8px; border: 1px solid #ddd;">Transformation</th><th style="padding: 8px; border: 1px solid #ddd;">Key</th></tr>';
+                let html = '<div style="background: #f5f5f5; padding: 1rem; border-radius: 6px;">';
+                html += '<h4 style="color: #1a3a52; margin-bottom: 1rem;">Generated Mapping (' + data.mappings.length + ' rows):</h4>';
+                html += '<div style="overflow-x: auto;"><table style="width: 100%; border-collapse: collapse; font-size: 0.9em;">';
+                html += '<tr style="background: #2c5aa0; color: white;"><th style="padding: 0.75rem; border: 1px solid #d0d7e0; text-align: left;">Source</th><th style="padding: 0.75rem; border: 1px solid #d0d7e0; text-align: left;">Target</th><th style="padding: 0.75rem; border: 1px solid #d0d7e0; text-align: left;">Transformation</th><th style="padding: 0.75rem; border: 1px solid #d0d7e0; text-align: left;">Key</th></tr>';
                 
-                data.mappings.forEach(m => {
-                    html += '<tr style="border: 1px solid #ddd;">';
-                    html += '<td style="padding: 8px; border: 1px solid #ddd;">' + (m.source_column || '') + '</td>';
-                    html += '<td style="padding: 8px; border: 1px solid #ddd;">' + m.target_column + '</td>';
-                    html += '<td style="padding: 8px; border: 1px solid #ddd; font-family: monospace; font-size: 0.9em;">' + m.transformation + '</td>';
-                    html += '<td style="padding: 8px; border: 1px solid #ddd;">' + m.is_key + '</td>';
+                data.mappings.forEach((m, idx) => {
+                    const bg = idx % 2 === 0 ? 'white' : '#f8f9fa';
+                    html += '<tr style="background: ' + bg + '; border: 1px solid #d0d7e0;">';
+                    html += '<td style="padding: 0.75rem; border: 1px solid #d0d7e0; font-family: monospace; font-size: 0.85em; color: #5a6c7d;">' + (m.source_column || '') + '</td>';
+                    html += '<td style="padding: 0.75rem; border: 1px solid #d0d7e0; font-family: monospace; font-size: 0.85em; color: #5a6c7d; font-weight: 500;">' + m.target_column + '</td>';
+                    html += '<td style="padding: 0.75rem; border: 1px solid #d0d7e0; font-family: monospace; font-size: 0.85em; color: #2c5aa0;">' + m.transformation + '</td>';
+                    html += '<td style="padding: 0.75rem; border: 1px solid #d0d7e0;">' + (m.is_key === 'Yes' || m.is_key === true ? '<span style="background: #e3eef9; color: #2c5aa0; padding: 0.25rem 0.5rem; border-radius: 3px; font-size: 0.85em;">Yes</span>' : '—') + '</td>';
                     html += '</tr>';
                 });
                 
                 html += '</table></div>';
-                html += '<p style="margin-top: 10px;"><small>Copy this table to create your CSV mapping file</small></p>';
+                html += '<p style="margin-top: 1rem; color: #5a6c7d; font-size: 0.9em;"><small>💡 Copy this table to create your CSV mapping file</small></p>';
                 html += '</div>';
                 
                 resultDiv.innerHTML = html;

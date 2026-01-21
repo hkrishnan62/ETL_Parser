@@ -1,0 +1,3 @@
+source_column,target_column
+customer_id,cust_id
+first_name,fname
