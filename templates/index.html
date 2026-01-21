@@ -54,13 +54,21 @@
             color: #5a6c7d;
         }
         
-        .nav-links a {
+        .nav-links a,
+        .nav-links button {
             text-decoration: none;
             color: #5a6c7d;
             transition: color 0.3s;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: inherit;
+            font-family: inherit;
+            padding: 0;
         }
         
-        .nav-links a:hover {
+        .nav-links a:hover,
+        .nav-links button:hover {
             color: #1a3a52;
         }
         
@@ -96,7 +104,7 @@
         
         .content {
             display: grid;
-            grid-template-columns: 2fr 1fr;
+            grid-template-columns: 1fr;
             gap: 2rem;
         }
         
@@ -478,15 +486,74 @@
             color: #00a2e8;
             font-weight: bold;
         }
+        
+        .contact-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .contact-modal.show {
+            display: flex;
+        }
+        
+        .contact-content {
+            background: white;
+            padding: 2rem;
+            border-radius: 8px;
+            max-width: 600px;
+            width: 90%;
+        }
+        
+        .contact-content h2 {
+            color: #1a3a52;
+            margin-bottom: 1.5rem;
+        }
+        
+        .contact-item {
+            margin-bottom: 1.5rem;
+            padding: 1rem;
+            background: #f8f9fa;
+            border-radius: 6px;
+            border-left: 4px solid #2c5aa0;
+        }
+        
+        .contact-item h3 {
+            color: #2c5aa0;
+            margin-bottom: 0.5rem;
+            font-size: 0.95em;
+        }
+        
+        .contact-item p {
+            color: #5a6c7d;
+            margin: 0;
+        }
+        
+        .contact-item a {
+            color: #2c5aa0;
+            text-decoration: none;
+        }
+        
+        .contact-item a:hover {
+            text-decoration: underline;
+        }
     </style>
 </head>
 <body>
     <div class="navbar">
         <div class="navbar-content">
-            <div class="logo">ETL Parser</div>
+            <div class="logo">ETL Mapping to SQL Query</div>
             <div class="nav-links">
                 <a href="#features">Features</a>
                 <a href="#documentation">Documentation</a>
+                <button onclick="showContactModal()">Contact Us</button>
             </div>
         </div>
     </div>
@@ -501,11 +568,10 @@
             <div class="main-card">
                 <form id="uploadForm">
                 <div class="form-section">
-                    <h2>📄 Upload Mapping Document</h2>
+                    <h2>Upload Mapping Document</h2>
                     <div class="form-group">
                         <div class="file-upload" id="fileUploadArea">
                             <label for="fileInput" class="file-upload-label">
-                                <div style="font-size: 1.5rem; margin-bottom: 0.5rem;">⬆️</div>
                                 <div style="font-weight: 600; margin-bottom: 0.25rem;">Click to upload or drag and drop</div>
                                 <div style="font-size: 0.9em; color: #5a6c7d;">CSV or Excel files (XLS, XLSX)</div>
                             </label>
@@ -516,7 +582,7 @@
                 </div>
                 
                 <div class="form-section">
-                    <h2>⚙️ Configuration</h2>
+                    <h2>Configuration</h2>
                     <div class="grid-2">
                         <div class="form-group">
                             <label for="targetTable">Target Table Name</label>
@@ -558,7 +624,7 @@
                     <div class="form-group">
                         <label style="display: flex; align-items: center; cursor: pointer; font-weight: 500;">
                             <input type="checkbox" id="useAI" name="use_ai" style="width: auto; margin-right: 0.75rem;">
-                            <span>🤖 Enable AI Optimization & Analysis</span>
+                            <span>Enable AI Optimization & Analysis</span>
                         </label>
                         <small style="color: #5a6c7d; margin-top: 0.5rem; display: block; margin-left: 1.75rem;">
                             AI-powered query optimization and transformation suggestions (requires API key)
@@ -570,10 +636,10 @@
                 
                 <div class="button-group" style="width: 100%;">
                     <button type="button" class="btn btn-accent" onclick="showAISuggestion()" style="flex: 1;">
-                        🤖 AI Suggestions
+                        AI Suggestions
                     </button>
                     <button type="button" class="btn btn-secondary" onclick="showNLMapping()" style="flex: 1;">
-                        💬 NL to CSV
+                        Natural Language to CSV
                     </button>
                 </div>
             </form>
@@ -591,40 +657,13 @@
                     <div id="queries"></div>
                 </div>
             </div>
-            
-            <div class="sidebar-card">
-                <h3 style="color: #1a3a52; margin-bottom: 1rem; font-size: 1em;">✨ Features</h3>
-                <ul class="feature-list">
-                    <li>Support for CSV & Excel formats</li>
-                    <li>6 Database types</li>
-                    <li>AI-powered optimization</li>
-                    <li>Instant SQL generation</li>
-                    <li>Query validation</li>
-                    <li>Copy to clipboard</li>
-                </ul>
-                
-                <hr style="margin: 1.5rem 0; border: none; border-top: 1px solid #d0d7e0;">
-                
-                <h3 style="color: #1a3a52; margin-bottom: 1rem; font-size: 0.95em;">📋 Required Format</h3>
-                <div style="background: #f8f9fa; padding: 1rem; border-radius: 4px; font-size: 0.85em;">
-                    <p style="margin-bottom: 0.75rem; color: #2c3e50;"><strong>Your mapping file must have:</strong></p>
-                    <ul class="feature-list" style="font-size: 0.9em;">
-                        <li><code style="background: white; padding: 0.2rem 0.4rem;">source_column</code></li>
-                        <li><code style="background: white; padding: 0.2rem 0.4rem;">target_column</code></li>
-                        <li><code style="background: white; padding: 0.2rem 0.4rem;">transformation</code></li>
-                    </ul>
-                    <p style="margin-top: 0.75rem; color: #5a6c7d; font-size: 0.85em;">
-                        💡 <a href="javascript:showFormatGuide()" style="color: #2c5aa0; text-decoration: none; font-weight: 500;">View example →</a>
-                    </p>
-                </div>
-            </div>
         </div>
     </div>
     
     <!-- AI Suggestion Modal -->
     <div id="aiModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000;">
         <div style="background: white; max-width: 600px; margin: 50px auto; padding: 2rem; border-radius: 8px; max-height: 80vh; overflow-y: auto;">
-            <h2 style="color: #1a3a52; margin-bottom: 1.5rem;">🤖 AI Transformation Suggestion</h2>
+            <h2 style="color: #1a3a52; margin-bottom: 1.5rem;">AI Transformation Suggestion</h2>
             <div style="margin: 1.5rem 0;">
                 <label style="display: block; font-weight: 500; margin-bottom: 0.5rem; color: #2c3e50;">Source Column:</label>
                 <input type="text" id="aiSourceCol" style="width: 100%; padding: 0.75rem; margin-bottom: 1rem; border: 1px solid #d0d7e0; border-radius: 4px;">
@@ -649,7 +688,7 @@
     <!-- NL Mapping Modal -->
     <div id="nlModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000;">
         <div style="background: white; max-width: 700px; margin: 50px auto; padding: 2rem; border-radius: 8px; max-height: 80vh; overflow-y: auto;">
-            <h2 style="color: #1a3a52; margin-bottom: 1rem;">💬 Generate Mapping from Description</h2>
+            <h2 style="color: #1a3a52; margin-bottom: 1rem;">Generate Mapping from Description</h2>
             <p style="color: #5a6c7d; margin-bottom: 1.5rem; line-height: 1.6;">
                 Describe your ETL mapping in plain English, and AI will generate the CSV mapping for you.
             </p>
@@ -670,12 +709,12 @@
     <div id="formatGuideModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000; overflow-y: auto;">
         <div style="background: white; max-width: 800px; margin: 30px auto; padding: 2rem; border-radius: 8px;">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
-                <h2 style="color: #1a3a52; margin: 0;">📋 Mapping File Format Guide</h2>
+                <h2 style="color: #1a3a52; margin: 0;">Mapping File Format Guide</h2>
                 <button onclick="closeFormatGuide()" style="background: none; border: none; font-size: 1.5rem; cursor: pointer; color: #5a6c7d;">✕</button>
             </div>
             
             <div style="background: #f0f4f8; padding: 1.5rem; border-radius: 6px; margin-bottom: 1.5rem;">
-                <h3 style="color: #2c5aa0; margin-top: 0; margin-bottom: 1rem;">✅ Required Columns</h3>
+                <h3 style="color: #2c5aa0; margin-top: 0; margin-bottom: 1rem;">Required Columns</h3>
                 <p style="color: #2c3e50; margin: 0.5rem 0;">Your mapping file MUST contain exactly 3 required columns:</p>
                 <table style="width: 100%; margin-top: 1rem; border-collapse: collapse;">
                     <tr style="background: #2c5aa0; color: white;">
@@ -702,7 +741,7 @@
             </div>
             
             <div style="background: #f8f9fa; padding: 1.5rem; border-radius: 6px; margin-bottom: 1.5rem;">
-                <h3 style="color: #1a3a52; margin-top: 0; margin-bottom: 1rem;">📝 Example CSV Format</h3>
+                <h3 style="color: #1a3a52; margin-top: 0; margin-bottom: 1rem;">Example CSV Format</h3>
                 <pre style="background: white; border: 1px solid #d0d7e0; padding: 1rem; border-radius: 4px; overflow-x: auto; font-size: 0.85em;">source_column,target_column,transformation
 customer_id,cust_id,source.customer_id
 first_name,fname,source.first_name
@@ -712,11 +751,42 @@ status,order_status,CASE WHEN source.status = 'ACTIVE' THEN 'A' ELSE 'I' END</pr
             </div>
             
             <div style="background: #fef3c7; padding: 1rem; border-radius: 6px; border-left: 4px solid #f59e0b; margin-bottom: 1.5rem;">
-                <p style="margin: 0; color: #92400e;"><strong>⚠️ Important:</strong> All required columns must have values for each row. Empty cells in any required column will cause validation errors.</p>
+                <p style="margin: 0; color: #92400e;"><strong>Important:</strong> All required columns must have values for each row. Empty cells in any required column will cause validation errors.</p>
             </div>
             
             <div style="text-align: right;">
                 <button onclick="closeFormatGuide()" class="btn">Got it!</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Contact Us Modal -->
+    <div id="contactModal" class="contact-modal">
+        <div class="contact-content">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+                <h2 style="margin: 0;">Contact Us</h2>
+                <button onclick="closeContactModal()" style="background: none; border: none; font-size: 1.5rem; cursor: pointer; color: #5a6c7d;">✕</button>
+            </div>
+            
+            <p style="color: #5a6c7d; margin-bottom: 1.5rem;">Have questions, found a bug, or want to share feedback? We'd love to hear from you!</p>
+            
+            <div class="contact-item">
+                <h3>Email</h3>
+                <p><a href="mailto:hkrishnan62@gmail.com">hkrishnan62@gmail.com</a></p>
+            </div>
+            
+            <div class="contact-item">
+                <h3>GitHub Issues</h3>
+                <p>Report bugs or suggest features on <a href="https://github.com/hkrishnan62/ETL_Parser/issues" target="_blank">our GitHub repository</a></p>
+            </div>
+            
+            <div class="contact-item">
+                <h3>Feedback & Suggestions</h3>
+                <p>Email us your ideas or suggestions at <a href="mailto:hkrishnan62@gmail.com">hkrishnan62@gmail.com</a></p>
+            </div>
+            
+            <div style="text-align: right; margin-top: 2rem;">
+                <button onclick="closeContactModal()" class="btn">Close</button>
             </div>
         </div>
     </div>
@@ -983,6 +1053,26 @@ status,order_status,CASE WHEN source.status = 'ACTIVE' THEN 'A' ELSE 'I' END</pr
         function closeFormatGuide() {
             document.getElementById('formatGuideModal').style.display = 'none';
         }
+        
+        function showContactModal() {
+            document.getElementById('contactModal').classList.add('show');
+        }
+        
+        function closeContactModal() {
+            document.getElementById('contactModal').classList.remove('show');
+        }
+        
+        // Close contact modal when clicking outside
+        document.addEventListener('DOMContentLoaded', function() {
+            const contactModal = document.getElementById('contactModal');
+            if (contactModal) {
+                contactModal.addEventListener('click', function(e) {
+                    if (e.target === contactModal) {
+                        closeContactModal();
+                    }
+                });
+            }
+        });
         
         async function getAISuggestion() {
             const sourceCol = document.getElementById('aiSourceCol').value;
