@@ -18,6 +18,17 @@ app.config['ALLOWED_EXTENSIONS'] = {'csv', 'xlsx', 'xls'}
 os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
 
 
+# SEO Headers Middleware
+@app.after_request
+def add_seo_headers(response):
+    """Add SEO and security headers to all responses"""
+    response.headers['X-Content-Type-Options'] = 'nosniff'
+    response.headers['X-Frame-Options'] = 'SAMEORIGIN'
+    response.headers['X-XSS-Protection'] = '1; mode=block'
+    response.headers['Referrer-Policy'] = 'strict-origin-when-cross-origin'
+    return response
+
+
 def allowed_file(filename):
     """Check if file has allowed extension"""
     return '.' in filename and \
@@ -28,6 +39,41 @@ def allowed_file(filename):
 def index():
     """Render main page"""
     return render_template('index.html')
+
+
+@app.route('/sitemap.xml')
+def sitemap():
+    """Serve sitemap.xml with correct content type"""
+    try:
+        with open('static/sitemap.xml', 'r', encoding='utf-8') as f:
+            sitemap_content = f.read()
+        response = app.response_class(
+            response=sitemap_content,
+            status=200,
+            mimetype='application/xml; charset=utf-8'
+        )
+        response.headers['Content-Disposition'] = 'inline'
+        return response
+    except Exception as e:
+        print(f"Error serving sitemap: {str(e)}")
+        return "Sitemap not found", 404
+
+
+@app.route('/robots.txt')
+def robots():
+    """Serve robots.txt with correct content type"""
+    try:
+        with open('robots.txt', 'r', encoding='utf-8') as f:
+            robots_content = f.read()
+        response = app.response_class(
+            response=robots_content,
+            status=200,
+            mimetype='text/plain; charset=utf-8'
+        )
+        return response
+    except Exception as e:
+        print(f"Error serving robots.txt: {str(e)}")
+        return "Robots.txt not found", 404
 
 
 @app.route('/upload', methods=['POST'])

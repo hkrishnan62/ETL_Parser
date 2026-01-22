@@ -1,0 +1,11 @@
+User-agent: *
+Allow: /
+Disallow: /uploads/
+Disallow: /static/
+
+# Sitemaps
+Sitemap: https://etl-mapping-converter-to-sql.onrender.com/sitemap.xml
+Sitemap: https://etl-parser.onrender.com/sitemap.xml
+
+# Crawl delay (optional - allows servers to not be overloaded)
+Crawl-delay: 1
