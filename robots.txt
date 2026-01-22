@@ -2,9 +2,11 @@ User-agent: *
 Allow: /
 Disallow: /uploads/
 Disallow: /static/
+Disallow: /admin
+Disallow: /private
+
+User-agent: Googlebot
+Allow: /
 
 # Sitemaps
 Sitemap: https://etl-mapping-converter-to-sql.onrender.com/sitemap.xml
-
-# Crawl delay (optional - allows servers to not be overloaded)
-Crawl-delay: 1
