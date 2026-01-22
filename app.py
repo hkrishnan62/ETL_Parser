@@ -63,22 +63,22 @@ def sitemap():
 
 @app.route('/robots.txt')
 def robots():
-    """Serve robots.txt with correct content type - maximally permissive to ensure Google crawl"""
-    # Hardcoded minimal robots.txt that allows all crawling
+    """Serve robots.txt - COMPLETELY PERMISSIVE to ensure Google can crawl everything"""
+    # Maximum permissiveness to ensure Google can crawl all pages
+    # Using ONLY Allow: / with no Disallow directives
     robots_content = """User-agent: *
-Allow: /
-Allow: /static/
-Allow: /uploads/"""
+Allow: /"""
     
     response = app.response_class(
         response=robots_content,
         status=200,
         mimetype='text/plain; charset=utf-8'
     )
-    # Important: Don't cache robots.txt so changes take effect immediately for Google
-    response.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate'
-    response.headers['Pragma'] = 'no-cache'
-    response.headers['Expires'] = '0'
+    # Force no caching so Google sees changes immediately
+    response.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate, max-age=0'
+    response.headers['Pragma'] = 'no-cache, no-store'
+    response.headers['Expires'] = '-1'
+    response.headers['Date'] = 'Thu, 01 Jan 1970 00:00:00 GMT'
     return response
 
 
