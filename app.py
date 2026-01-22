@@ -26,6 +26,8 @@ def add_seo_headers(response):
     response.headers['X-Frame-Options'] = 'SAMEORIGIN'
     response.headers['X-XSS-Protection'] = '1; mode=block'
     response.headers['Referrer-Policy'] = 'strict-origin-when-cross-origin'
+    # Add cache control headers
+    response.headers['Cache-Control'] = 'public, max-age=3600'
     return response
 
 
