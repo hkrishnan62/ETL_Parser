@@ -63,27 +63,23 @@ def sitemap():
 
 @app.route('/robots.txt')
 def robots():
-    """Serve robots.txt with correct content type"""
-    try:
-        robots_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'robots.txt')
-        with open(robots_path, 'r', encoding='utf-8') as f:
-            robots_content = f.read().strip()
-        response = app.response_class(
-            response=robots_content,
-            status=200,
-            mimetype='text/plain; charset=utf-8'
-        )
-        response.headers['Cache-Control'] = 'public, max-age=86400'
-        return response
-    except Exception as e:
-        print(f"Error serving robots.txt: {str(e)}")
-        # Return a default minimal robots.txt if file not found
-        default_robots = "User-agent: *\nAllow: /"
-        return app.response_class(
-            response=default_robots,
-            status=200,
-            mimetype='text/plain; charset=utf-8'
-        )
+    """Serve robots.txt with correct content type - maximally permissive to ensure Google crawl"""
+    # Hardcoded minimal robots.txt that allows all crawling
+    robots_content = """User-agent: *
+Allow: /
+Allow: /static/
+Allow: /uploads/"""
+    
+    response = app.response_class(
+        response=robots_content,
+        status=200,
+        mimetype='text/plain; charset=utf-8'
+    )
+    # Important: Don't cache robots.txt so changes take effect immediately for Google
+    response.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate'
+    response.headers['Pragma'] = 'no-cache'
+    response.headers['Expires'] = '0'
+    return response
 
 
 @app.route('/upload', methods=['POST'])
