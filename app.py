@@ -63,17 +63,25 @@ def sitemap():
 def robots():
     """Serve robots.txt with correct content type"""
     try:
-        with open('robots.txt', 'r', encoding='utf-8') as f:
-            robots_content = f.read()
+        robots_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'robots.txt')
+        with open(robots_path, 'r', encoding='utf-8') as f:
+            robots_content = f.read().strip()
         response = app.response_class(
             response=robots_content,
             status=200,
             mimetype='text/plain; charset=utf-8'
         )
+        response.headers['Cache-Control'] = 'public, max-age=86400'
         return response
     except Exception as e:
         print(f"Error serving robots.txt: {str(e)}")
-        return "Robots.txt not found", 404
+        # Return a default minimal robots.txt if file not found
+        default_robots = "User-agent: *\nAllow: /"
+        return app.response_class(
+            response=default_robots,
+            status=200,
+            mimetype='text/plain; charset=utf-8'
+        )
 
 
 @app.route('/upload', methods=['POST'])

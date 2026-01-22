@@ -1,6 +1,2 @@
 User-agent: *
 Allow: /
-Disallow: /uploads/
-
-# Sitemaps
-Sitemap: https://etl-mapping-converter-to-sql.onrender.com/sitemap.xml
