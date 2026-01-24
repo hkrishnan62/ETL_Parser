@@ -46,6 +46,26 @@ def index():
     return render_template('index.html')
 
 
+@app.route('/robots.txt')
+def robots():
+    """Serve robots.txt with no-cache headers to prevent caching issues"""
+    try:
+        with open('static/robots.txt', 'r', encoding='utf-8') as f:
+            robots_content = f.read()
+        response = app.response_class(
+            response=robots_content,
+            status=200,
+            mimetype='text/plain; charset=utf-8'
+        )
+        response.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate'
+        response.headers['Pragma'] = 'no-cache'
+        response.headers['Expires'] = '0'
+        return response
+    except Exception as e:
+        print(f"Error serving robots.txt: {str(e)}")
+        return "robots.txt not found", 404
+
+
 @app.route('/sitemap.xml')
 def sitemap():
     """Serve sitemap.xml with correct content type"""
