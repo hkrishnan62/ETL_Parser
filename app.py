@@ -68,20 +68,19 @@ def sitemap():
 def robots():
     """Serve robots.txt - COMPLETELY PERMISSIVE to ensure Google can crawl everything"""
     # Maximum permissiveness to ensure Google can crawl all pages
-    # Using ONLY Allow: / with no Disallow directives
     robots_content = """User-agent: *
-Allow: /"""
+Allow: /
+Sitemap: https://etl-parser.onrender.com/sitemap.xml"""
     
     response = app.response_class(
         response=robots_content,
         status=200,
-        mimetype='text/plain; charset=utf-8'
+        mimetype='text/plain'
     )
     # Force no caching so Google sees changes immediately
     response.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate, max-age=0'
-    response.headers['Pragma'] = 'no-cache, no-store'
-    response.headers['Expires'] = '-1'
-    response.headers['Date'] = 'Thu, 01 Jan 1970 00:00:00 GMT'
+    response.headers['Pragma'] = 'no-cache'
+    response.headers['Expires'] = '0'
     return response
 
 
