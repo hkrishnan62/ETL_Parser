@@ -1,3 +1,3 @@
 User-agent: *
 Allow: /
-Sitemap: https://etl-parser.onrender.com/sitemap.xml
+Sitemap: https://etl-mapping-converter-to-sql.onrender.com/sitemap.xml
