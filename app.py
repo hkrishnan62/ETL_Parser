@@ -64,30 +64,6 @@ def sitemap():
         return "Sitemap not found", 404
 
 
-@app.route('/robots.txt')
-def robots():
-    """Serve robots.txt - COMPLETELY PERMISSIVE to ensure Google can crawl everything"""
-    try:
-        # Try to serve from static folder first
-        return send_file('static/robots.txt', mimetype='text/plain')
-    except:
-        # Fallback to inline content
-        robots_content = """User-agent: *
-Allow: /
-Sitemap: https://etl-parser.onrender.com/sitemap.xml"""
-        
-        response = app.response_class(
-            response=robots_content,
-            status=200,
-            mimetype='text/plain'
-        )
-        # Force no caching so Google sees changes immediately
-        response.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate, max-age=0'
-        response.headers['Pragma'] = 'no-cache'
-        response.headers['Expires'] = '0'
-        return response
-
-
 @app.route('/upload', methods=['POST'])
 def upload_file():
     """Handle file upload and generate queries"""
