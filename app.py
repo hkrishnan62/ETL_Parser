@@ -48,7 +48,7 @@ def index():
 
 @app.route('/robots.txt')
 def robots():
-    """Serve robots.txt with no-cache headers to prevent caching issues"""
+    """Serve robots.txt with appropriate headers for search engine crawling"""
     try:
         with open('static/robots.txt', 'r', encoding='utf-8') as f:
             robots_content = f.read()
@@ -57,9 +57,14 @@ def robots():
             status=200,
             mimetype='text/plain; charset=utf-8'
         )
-        response.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate'
-        response.headers['Pragma'] = 'no-cache'
-        response.headers['Expires'] = '0'
+        # Cache robots.txt for 24 hours but allow revalidation
+        response.headers['Cache-Control'] = 'public, max-age=86400, must-revalidate'
+        response.headers['Content-Type'] = 'text/plain; charset=utf-8'
+        # Remove any no-cache directives that middleware might add
+        if 'Pragma' in response.headers:
+            del response.headers['Pragma']
+        if 'Expires' in response.headers:
+            del response.headers['Expires']
         return response
     except Exception as e:
         print(f"Error serving robots.txt: {str(e)}")
