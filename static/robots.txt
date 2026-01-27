@@ -1,8 +1,17 @@
+# Allow all bots
 User-agent: *
 Allow: /
-Disallow: /admin
-Disallow: /uploads
 
+# Block upload folder from indexing
+Disallow: /uploads/
+Disallow: /admin/
+
+# Allow Google to crawl static assets
+User-agent: Googlebot
+Allow: /
+Allow: /static/
+
+# Sitemaps
 Sitemap: https://etl-parser.onrender.com/sitemap.xml
 Sitemap: https://etlmappingtosql.onrender.com/sitemap.xml
 Sitemap: https://etl-mapping-converter-to-sql.onrender.com/sitemap.xml
