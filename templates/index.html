@@ -301,7 +301,6 @@
             margin-top: 2rem;
             display: none;
             animation: fadeIn 0.4s ease-in-out;
-            min-height: 400px;
         }
         
         .results.show {
@@ -703,7 +702,7 @@
                     <div id="aiAnalysis" style="display: none;"></div>
                     
                     <!-- Test Case Generation Section -->
-                    <div id="testCaseSection" style="display: none; margin-bottom: 2rem; padding: 1.5rem; background: linear-gradient(135deg, #f8f9fa 0%, #e8f4f8 100%); border-radius: 8px; border: 2px solid #00a2e8; opacity: 0; transition: opacity 0.3s ease-in-out;">
+                    <div id="testCaseSection" style="max-height: 0; overflow: hidden; opacity: 0; margin-bottom: 0; padding: 0 1.5rem; background: linear-gradient(135deg, #f8f9fa 0%, #e8f4f8 100%); border-radius: 8px; border: 2px solid #00a2e8; transition: max-height 0.4s ease-in-out, opacity 0.3s ease-in-out, padding 0.3s ease-in-out, margin-bottom 0.3s ease-in-out;">
                         <h3 style="color: #1a3a52; margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem;">
                             <span>🧪</span> Generate Test Cases
                         </h3>
@@ -1042,7 +1041,9 @@ status,order_status,CASE WHEN source.status = 'ACTIVE' THEN 'A' ELSE 'I' END</pr
                 
                 // Show test case generation section with smooth transition
                 const testCaseSection = document.getElementById('testCaseSection');
-                testCaseSection.style.display = 'block';
+                testCaseSection.style.maxHeight = '2000px'; // Large enough for content
+                testCaseSection.style.padding = '1.5rem';
+                testCaseSection.style.marginBottom = '2rem';
                 setTimeout(() => {
                     testCaseSection.style.opacity = '1';
                 }, 10);
