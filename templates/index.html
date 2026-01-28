@@ -301,6 +301,7 @@
             margin-top: 2rem;
             display: none;
             animation: fadeIn 0.4s ease-in-out;
+            min-height: 400px;
         }
         
         .results.show {
@@ -700,10 +701,9 @@
                 <div class="results" id="results">
                     <div class="summary" id="summary"></div>
                     <div id="aiAnalysis" style="display: none;"></div>
-                    <div id="queries"></div>
                     
                     <!-- Test Case Generation Section -->
-                    <div id="testCaseSection" style="display: none; margin-top: 2rem; padding: 1.5rem; background: linear-gradient(135deg, #f8f9fa 0%, #e8f4f8 100%); border-radius: 8px; border: 2px solid #00a2e8; opacity: 0; transition: opacity 0.3s ease-in-out;">
+                    <div id="testCaseSection" style="display: none; margin-bottom: 2rem; padding: 1.5rem; background: linear-gradient(135deg, #f8f9fa 0%, #e8f4f8 100%); border-radius: 8px; border: 2px solid #00a2e8; opacity: 0; transition: opacity 0.3s ease-in-out;">
                         <h3 style="color: #1a3a52; margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem;">
                             <span>🧪</span> Generate Test Cases
                         </h3>
@@ -751,6 +751,9 @@
                             <div id="testCasePreviewContent"></div>
                         </div>
                     </div>
+                    
+                    <!-- SQL Queries Section -->
+                    <div id="queries"></div>
                 </div>
             </div>
         </div>

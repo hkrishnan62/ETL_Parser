@@ -192,6 +192,14 @@
         
         .schema-table {
             margin-bottom: 1rem;
+            padding: 0.5rem;
+            border-radius: 4px;
+            transition: all 0.2s ease;
+        }
+        
+        .schema-table:hover {
+            background: #f0f4f8;
+            transform: translateX(4px);
         }
         
         .schema-table-name {
@@ -645,6 +653,8 @@ SELECT 'Target' as target, COUNT(*) as row_count FROM customers;</textarea>
                 Object.entries(data.schema).forEach(([tableName, columns]) => {
                     const tableDiv = document.createElement('div');
                     tableDiv.className = 'schema-table';
+                    tableDiv.style.cursor = 'pointer';
+                    tableDiv.title = 'Click to generate data quality queries';
                     
                     const nameDiv = document.createElement('div');
                     nameDiv.className = 'schema-table-name';
@@ -658,9 +668,71 @@ SELECT 'Target' as target, COUNT(*) as row_count FROM customers;</textarea>
                         tableDiv.appendChild(colDiv);
                     });
                     
+                    // Add click handler to generate data quality queries
+                    tableDiv.onclick = () => generateDataQualityQuery(tableName, columns);
+                    
                     container.appendChild(tableDiv);
                 });
             });
+
+        // Generate data quality queries for a table
+        function generateDataQualityQuery(tableName, columns) {
+            const columnNames = columns.map(col => col.name);
+            const numericCols = columns.filter(col => 
+                col.type.toLowerCase().includes('int') || 
+                col.type.toLowerCase().includes('real') || 
+                col.type.toLowerCase().includes('numeric')
+            ).map(col => col.name);
+            
+            // Build comprehensive data quality query
+            let query = `-- Data Quality Analysis for ${tableName}\n\n`;
+            
+            // 1. Row count and basic stats
+            query += `-- 1. Basic Statistics\n`;
+            query += `SELECT \n    '${tableName}' as table_name,\n`;
+            query += `    COUNT(*) as total_rows,\n`;
+            query += `    COUNT(DISTINCT ${columnNames[0]}) as unique_${columnNames[0]}\n`;
+            query += `FROM ${tableName};\n\n`;
+            
+            // 2. NULL analysis
+            query += `-- 2. NULL Value Analysis\n`;
+            query += `SELECT \n`;
+            columnNames.slice(0, 5).forEach((col, idx) => {
+                if (idx > 0) query += `UNION ALL\nSELECT \n`;
+                query += `    '${col}' as column_name,\n`;
+                query += `    COUNT(*) as null_count,\n`;
+                query += `    ROUND(COUNT(*) * 100.0 / (SELECT COUNT(*) FROM ${tableName}), 2) as null_percentage\n`;
+                query += `FROM ${tableName}\n`;
+                query += `WHERE ${col} IS NULL`;
+                if (idx < Math.min(4, columnNames.length - 1)) query += `\n`;
+            });
+            query += `;\n\n`;
+            
+            // 3. Duplicate detection
+            query += `-- 3. Duplicate Detection\n`;
+            query += `SELECT \n    ${columnNames[0]},\n`;
+            query += `    COUNT(*) as duplicate_count\n`;
+            query += `FROM ${tableName}\n`;
+            query += `GROUP BY ${columnNames[0]}\n`;
+            query += `HAVING COUNT(*) > 1\n`;
+            query += `ORDER BY duplicate_count DESC\n`;
+            query += `LIMIT 10;\n\n`;
+            
+            // 4. Numeric statistics (if numeric columns exist)
+            if (numericCols.length > 0) {
+                query += `-- 4. Numeric Column Statistics\n`;
+                query += `SELECT \n`;
+                numericCols.slice(0, 3).forEach((col, idx) => {
+                    query += `    MIN(${col}) as min_${col},\n`;
+                    query += `    MAX(${col}) as max_${col},\n`;
+                    query += `    ROUND(AVG(${col}), 2) as avg_${col}`;
+                    if (idx < Math.min(2, numericCols.length - 1)) query += `,\n`;
+                });
+                query += `\nFROM ${tableName};`;
+            }
+            
+            editor.setValue(query);
+        }
 
         // Run Query
         document.getElementById('runBtn').onclick = runQuery;
