@@ -1,0 +1,28 @@
+name: Keep Render App Alive
+
+on:
+  schedule:
+    # Run every 10 minutes (Render sleeps after 15 min of inactivity)
+    - cron: '*/10 * * * *'
+  workflow_dispatch: # Allow manual trigger
+
+jobs:
+  keep-alive:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Ping the application
+        run: |
+          echo "Pinging app at $(date)"
+          response=$(curl -s -o /dev/null -w "%{http_code}" https://etl-mapping-converter-to-sql.onrender.com)
+          echo "Response code: $response"
+          if [ $response -eq 200 ]; then
+            echo "✓ App is alive and responding"
+          else
+            echo "⚠ App returned status code: $response"
+          fi
+      
+      - name: Ping SQL Playground
+        run: |
+          echo "Pinging SQL Playground"
+          response=$(curl -s -o /dev/null -w "%{http_code}" https://etl-mapping-converter-to-sql.onrender.com/playground)
+          echo "Playground response: $response"
