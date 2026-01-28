@@ -33,8 +33,13 @@ def add_seo_headers(response):
     response.headers['X-XSS-Protection'] = '1; mode=block'
     response.headers['Referrer-Policy'] = 'strict-origin-when-cross-origin'
     
-    # Don't override cache headers if already set (e.g., for robots.txt)
-    if 'Cache-Control' not in response.headers:
+    # For HTML pages, prevent caching to always show latest version
+    if response.content_type and 'text/html' in response.content_type:
+        response.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate'
+        response.headers['Pragma'] = 'no-cache'
+        response.headers['Expires'] = '0'
+    # Don't override cache headers if already set (e.g., for robots.txt, static files)
+    elif 'Cache-Control' not in response.headers:
         response.headers['Cache-Control'] = 'public, max-age=3600'
     
     return response
