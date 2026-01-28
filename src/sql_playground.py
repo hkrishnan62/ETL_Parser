@@ -68,9 +68,8 @@ class SQLPlayground:
         return conn
     
     def _create_default_sample_data(self, conn: sqlite3.Connection):
-        """Create default sample tables for demonstration"""
-        # Customer table
-import random
+        """Create Financial Services sample database with 15 tables"""
+        import random
         from datetime import datetime, timedelta
         
         # 1. Customers table
