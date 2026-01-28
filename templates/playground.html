@@ -21,14 +21,14 @@
         
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', sans-serif;
-            background: #1e1e1e;
-            color: #e0e0e0;
+            background: #f8f9fa;
+            color: #2c3e50;
             min-height: 100vh;
         }
         
         .navbar {
-            background: #2d2d2d;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+            background: white;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
             padding: 1rem 2rem;
             position: sticky;
             top: 0;
@@ -46,7 +46,7 @@
         .logo {
             font-size: 1.3em;
             font-weight: 700;
-            color: #4fc3f7;
+            color: #1a3a52;
             letter-spacing: -0.5px;
         }
         
@@ -58,12 +58,12 @@
         
         .nav-links a {
             text-decoration: none;
-            color: #b0b0b0;
+            color: #5a6c7d;
             transition: color 0.3s;
         }
         
         .nav-links a:hover {
-            color: #4fc3f7;
+            color: #1a3a52;
         }
         
         .container {
@@ -78,12 +78,12 @@
         
         .playground-header h1 {
             font-size: 1.8em;
-            color: #4fc3f7;
+            color: #1a3a52;
             margin-bottom: 0.5rem;
         }
         
         .playground-header p {
-            color: #b0b0b0;
+            color: #5a6c7d;
             font-size: 0.95em;
         }
         
@@ -106,16 +106,18 @@
         }
         
         .sidebar {
-            background: #2d2d2d;
+            background: white;
             border-radius: 8px;
             padding: 1.5rem;
             overflow-y: auto;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
         }
         
         .sidebar h3 {
             font-size: 1em;
-            color: #4fc3f7;
+            color: #1a3a52;
             margin-bottom: 1rem;
+            font-weight: 600;
         }
         
         .tab-buttons {
@@ -127,9 +129,9 @@
         
         .tab-btn {
             padding: 0.5rem 1rem;
-            background: #1e1e1e;
-            border: 1px solid #3d3d3d;
-            color: #b0b0b0;
+            background: #f0f2f5;
+            border: 1px solid #d0d7e0;
+            color: #5a6c7d;
             border-radius: 4px;
             cursor: pointer;
             font-size: 0.85em;
@@ -137,9 +139,9 @@
         }
         
         .tab-btn.active {
-            background: #4fc3f7;
-            color: #1e1e1e;
-            border-color: #4fc3f7;
+            background: #2c5aa0;
+            color: white;
+            border-color: #2c5aa0;
         }
         
         .tab-content {
@@ -151,35 +153,36 @@
         }
         
         .sample-query {
-            background: #1e1e1e;
+            background: #f8f9fa;
             padding: 0.8rem;
             border-radius: 4px;
             margin-bottom: 0.8rem;
             cursor: pointer;
+            border: 1px solid #e0e0e0;
             transition: all 0.3s;
             border: 1px solid transparent;
         }
         
         .sample-query:hover {
-            border-color: #4fc3f7;
-            background: #252525;
+            border-color: #2c5aa0;
+            background: #f0f4f8;
         }
         
         .sample-query-name {
             font-weight: 600;
-            color: #e0e0e0;
+            color: #1a3a52;
             font-size: 0.9em;
             margin-bottom: 0.3rem;
         }
         
         .sample-query-desc {
             font-size: 0.8em;
-            color: #808080;
+            color: #5a6c7d;
         }
         
         .sample-query-category {
             font-size: 0.75em;
-            color: #81c784;
+            color: #2c5aa0;
             margin-top: 0.3rem;
             font-weight: 500;
         }
@@ -190,7 +193,7 @@
         
         .schema-table-name {
             font-weight: 600;
-            color: #81c784;
+            color: #2c5aa0;
             font-size: 0.9em;
             margin-bottom: 0.5rem;
             display: flex;
@@ -200,30 +203,31 @@
         
         .schema-column {
             font-size: 0.85em;
-            color: #b0b0b0;
+            color: #5a6c7d;
             padding: 0.3rem 0.5rem;
             padding-left: 1.5rem;
         }
         
         .schema-column-type {
-            color: #ce93d8;
+            color: #7c3aed;
             font-size: 0.8em;
         }
         
         .editor-panel {
             display: flex;
             flex-direction: column;
-            background: #2d2d2d;
+            background: white;
             border-radius: 8px;
             overflow: hidden;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
         }
         
         .editor-toolbar {
-            background: #1e1e1e;
+            background: #f8f9fa;
             padding: 0.8rem 1rem;
             display: flex;
             gap: 0.8rem;
-            border-bottom: 1px solid #3d3d3d;
+            border-bottom: 1px solid #e0e0e0;
         }
         
         .btn {
@@ -240,30 +244,31 @@
         }
         
         .btn-primary {
-            background: #4fc3f7;
-            color: #1e1e1e;
+            background: #2c5aa0;
+            color: white;
         }
         
         .btn-primary:hover {
-            background: #29b6f6;
+            background: #1a3a52;
         }
         
         .btn-secondary {
-            background: #424242;
-            color: #e0e0e0;
+            background: #f0f2f5;
+            color: #5a6c7d;
+            border: 1px solid #d0d7e0;
         }
         
         .btn-secondary:hover {
-            background: #525252;
+            background: #e3e6ea;
         }
         
         .btn-success {
-            background: #66bb6a;
-            color: #1e1e1e;
+            background: #22c55e;
+            color: white;
         }
         
         .btn-success:hover {
-            background: #4caf50;
+            background: #16a34a;
         }
         
         .btn:disabled {
@@ -283,12 +288,13 @@
         }
         
         .results-panel {
-            background: #2d2d2d;
+            background: white;
             border-radius: 8px;
             padding: 1.5rem;
             overflow-y: auto;
             display: flex;
             flex-direction: column;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
         }
         
         .results-header {
@@ -300,20 +306,21 @@
         
         .results-header h3 {
             font-size: 1em;
-            color: #4fc3f7;
+            color: #1a3a52;
+            font-weight: 600;
         }
         
         .results-stats {
             font-size: 0.85em;
-            color: #b0b0b0;
+            color: #5a6c7d;
         }
         
         .results-table-container {
             flex: 1;
             overflow: auto;
-            background: #1e1e1e;
+            background: white;
             border-radius: 4px;
-            border: 1px solid #3d3d3d;
+            border: 1px solid #e0e0e0;
         }
         
         .results-table {
@@ -323,53 +330,50 @@
         }
         
         .results-table th {
-            background: #424242;
-            color: #4fc3f7;
+            background: #f8f9fa;
+            color: #1a3a52;
             padding: 0.8rem;
             text-align: left;
             position: sticky;
             top: 0;
             font-weight: 600;
-            border-bottom: 2px solid #4fc3f7;
+            border-bottom: 2px solid #2c5aa0;
         }
         
         .results-table td {
             padding: 0.8rem;
-            border-bottom: 1px solid #3d3d3d;
-            color: #e0e0e0;
+            border-bottom: 1px solid #e0e0e0;
+            color: #2c3e50;
         }
         
         .results-table tr:hover {
-            background: #252525;
+            background: #f8f9fa;
         }
         
         .error-message {
-            background: #d32f2f;
-            color: white;
+            background: #fee2e2;
+            color: #991b1b;
             padding: 1rem;
             border-radius: 4px;
             margin-top: 1rem;
             font-size: 0.9em;
+            border-left: 4px solid #ef4444;
         }
         
         .success-message {
-            background: #388e3c;
-            color: white;
+            background: #f0fdf4;
+            color: #15803d;
             padding: 1rem;
             border-radius: 4px;
             margin-top: 1rem;
             font-size: 0.9em;
+            border-left: 4px solid #22c55e;
         }
         
         .empty-state {
             text-align: center;
             padding: 3rem;
-            color: #808080;
-        }
-        
-        .empty-state-icon {
-            font-size: 3em;
-            margin-bottom: 1rem;
+            color: #5a6c7d;
         }
         
         .share-modal {
@@ -379,7 +383,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0,0,0,0.7);
+            background: rgba(0,0,0,0.5);
             z-index: 1000;
             align-items: center;
             justify-content: center;
@@ -390,7 +394,7 @@
         }
         
         .share-modal-content {
-            background: #2d2d2d;
+            background: white;
             padding: 2rem;
             border-radius: 8px;
             max-width: 500px;
@@ -398,8 +402,9 @@
         }
         
         .share-modal h3 {
-            color: #4fc3f7;
+            color: #1a3a52;
             margin-bottom: 1rem;
+            font-weight: 600;
         }
         
         .share-url-container {
@@ -410,23 +415,23 @@
         
         .share-url {
             flex: 1;
-            background: #1e1e1e;
-            border: 1px solid #3d3d3d;
+            background: #f8f9fa;
+            border: 1px solid #d0d7e0;
             padding: 0.8rem;
             border-radius: 4px;
-            color: #4fc3f7;
+            color: #2c5aa0;
             font-family: monospace;
         }
         
         .loading {
             text-align: center;
             padding: 2rem;
-            color: #808080;
+            color: #5a6c7d;
         }
         
         .spinner {
-            border: 3px solid #3d3d3d;
-            border-top: 3px solid #4fc3f7;
+            border: 3px solid #f0f2f5;
+            border-top: 3px solid #2c5aa0;
             border-radius: 50%;
             width: 40px;
             height: 40px;
@@ -443,7 +448,7 @@
 <body>
     <div class="navbar">
         <div class="navbar-content">
-            <div class="logo">🚀 SQL Playground</div>
+            <div class="logo">SQL Playground</div>
             <div class="nav-links">
                 <a href="/">← Back to ETL Validator</a>
                 <a href="#" id="aboutLink">About</a>
@@ -453,14 +458,14 @@
 
     <div class="container">
         <div class="playground-header">
-            <h1>🎮 Interactive SQL Playground</h1>
+            <h1>Interactive SQL Playground</h1>
             <p>Write SQL queries, test with sample data, and share your results instantly</p>
         </div>
 
         <div class="playground-layout">
             <!-- Sidebar with samples and schema -->
             <div class="sidebar">
-                <h3>📚 ETL Test Library</h3>
+                <h3>ETL Test Library</h3>
                 
                 <!-- Tab Buttons -->
                 <div class="tab-buttons">
@@ -498,13 +503,13 @@
                         ▶️ Run Query
                     </button>
                     <button class="btn btn-secondary" id="clearBtn">
-                        🗑️ Clear
+                        Clear
                     </button>
                     <button class="btn btn-success" id="shareBtn">
-                        🔗 Share
+                        Share
                     </button>
                     <button class="btn btn-secondary" id="profileBtn" title="Profile selected table">
-                        📊 Profile Table
+                        Profile Table
                     </button>
                 </div>
                 <div class="editor-container">
@@ -521,12 +526,11 @@ SELECT 'Target' as target, COUNT(*) as row_count FROM customers;</textarea>
             <!-- Results Panel -->
             <div class="results-panel">
                 <div class="results-header">
-                    <h3>📊 Results</h3>
+                    <h3>Results</h3>
                     <span class="results-stats" id="resultsStats"></span>
                 </div>
                 <div class="results-table-container" id="resultsContainer">
                     <div class="empty-state">
-                        <div class="empty-state-icon">💭</div>
                         <p>Run a query to see results</p>
                     </div>
                 </div>
