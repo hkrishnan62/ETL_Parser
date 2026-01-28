@@ -41,6 +41,8 @@
             background: #f8f9fa;
             min-height: 100vh;
             color: #2c3e50;
+            overflow-x: hidden;
+            max-width: 100vw;
         }
         
         .navbar {
@@ -109,6 +111,7 @@
             max-width: 1200px;
             margin: 0 auto;
             padding: 2rem;
+            overflow-x: hidden;
         }
         
         .hero {
@@ -301,6 +304,10 @@
             margin-top: 2rem;
             display: none;
             animation: fadeIn 0.4s ease-in-out;
+            width: 100%;
+            max-width: 100%;
+            box-sizing: border-box;
+            overflow-x: hidden;
         }
         
         .results.show {
@@ -388,12 +395,15 @@
             color: #d4d4d4;
             padding: 1.5rem;
             border-radius: 4px;
-            overflow-x: auto;
             font-family: 'Courier New', monospace;
             font-size: 0.85em;
             line-height: 1.6;
-            white-space: pre;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
             border: 1px solid #333;
+            max-width: 100%;
+            box-sizing: border-box;
         }
         
         .error {
