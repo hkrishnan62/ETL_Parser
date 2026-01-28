@@ -10,19 +10,22 @@ jobs:
   keep-alive:
     runs-on: ubuntu-latest
     steps:
-      - name: Ping the application
+      - name: Ping Health Endpoint
         run: |
           echo "Pinging app at $(date)"
-          response=$(curl -s -o /dev/null -w "%{http_code}" https://etl-mapping-converter-to-sql.onrender.com)
+          response=$(curl -s -o /dev/null -w "%{http_code}" https://etl-parser.onrender.com/health)
           echo "Response code: $response"
           if [ $response -eq 200 ]; then
-            echo "✓ App is alive and responding"
+            echo "✅ App is awake and healthy!"
           else
-            echo "⚠ App returned status code: $response"
+            echo "⚠️ App returned status code: $response"
           fi
       
-      - name: Ping SQL Playground
+      - name: Ping Main Page
         run: |
-          echo "Pinging SQL Playground"
-          response=$(curl -s -o /dev/null -w "%{http_code}" https://etl-mapping-converter-to-sql.onrender.com/playground)
-          echo "Playground response: $response"
+          echo "Pinging main page"
+          response=$(curl -s -o /dev/null -w "%{http_code}" https://etl-parser.onrender.com/)
+          echo "Main page response: $response"
+      
+      - name: Log Completion
+        run: echo "Keep-alive ping completed successfully at $(date -u)"
