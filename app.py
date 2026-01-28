@@ -2,11 +2,14 @@
 Flask Web Application for ETL Mapping Validator with AI Enhancement
 """
 import os
+import io
 from flask import Flask, render_template, request, jsonify, send_file
 from werkzeug.utils import secure_filename
 from src.etl_validator import ETLValidator
 from src.ai_enhanced_validator import AIEnhancedValidator
 from src.ai_agent import get_ai_agent
+from src.sql_playground import SQLPlayground
+from src.test_case_generator import TestCaseGenerator
 import traceback
 
 app = Flask(__name__, static_folder='static', static_url_path='')
@@ -16,6 +19,9 @@ app.config['ALLOWED_EXTENSIONS'] = {'csv', 'xlsx', 'xls'}
 
 # Create upload folder if it doesn't exist
 os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
+
+# Initialize SQL Playground
+playground = SQLPlayground()
 
 
 # SEO Headers Middleware
@@ -181,6 +187,8 @@ def upload_file():
         
         # Get mapping summary
         summary = validator.get_mapping_summary()
+        # Include mappings for test case generation
+        summary['mappings'] = validator.mappings
         
         return jsonify({
             'success': True,
@@ -286,6 +294,245 @@ def ai_analyze_mapping():
     
     except Exception as e:
         return jsonify({'error': str(e)}), 500
+
+
+# ==================== SQL Playground Endpoints ====================
+
+@app.route('/playground/execute', methods=['POST'])
+def playground_execute():
+    """Execute SQL query in playground"""
+    try:
+        data = request.json
+        query = data.get('query', '')
+        sample_data = data.get('sample_data')
+        
+        if not query.strip():
+            return jsonify({'error': 'Query cannot be empty'}), 400
+        
+        result = playground.execute_query(query, sample_data)
+        return jsonify(result)
+    
+    except Exception as e:
+        return jsonify({
+            'success': False,
+            'error': str(e),
+            'rows': [],
+            'columns': []
+        }), 500
+
+
+@app.route('/playground/share', methods=['POST'])
+def playground_share():
+    """Create shareable link for query"""
+    try:
+        data = request.json
+        query = data.get('query', '')
+        sample_data = data.get('sample_data')
+        results = data.get('results')
+        
+        if not query.strip():
+            return jsonify({'error': 'Query cannot be empty'}), 400
+        
+        share_id = playground.create_share_link(query, sample_data, results)
+        
+        # Generate full URL
+        base_url = request.host_url.rstrip('/')
+        share_url = f"{base_url}/playground/{share_id}"
+        
+        return jsonify({
+            'success': True,
+            'share_id': share_id,
+            'share_url': share_url
+        })
+    
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+
+@app.route('/playground/')
+def playground_home():
+    """Render SQL playground page"""
+    return render_template('playground.html', shared_data=None, share_id=None)
+
+
+@app.route('/playground/<share_id>')
+def playground_view_shared(share_id):
+    """View shared query"""
+    shared_data = playground.get_shared_query(share_id)
+    
+    if not shared_data:
+        return "Shared query not found", 404
+    
+    return render_template('playground.html', shared_data=shared_data, share_id=share_id)
+
+
+@app.route('/playground/samples')
+def playground_samples():
+    """Get sample queries"""
+    return jsonify({
+        'success': True,
+        'samples': playground.get_sample_queries()
+    })
+
+
+@app.route('/playground/schema')
+def playground_schema():
+    """Get database schema"""
+    return jsonify({
+        'success': True,
+        'schema': playground.get_database_schema()
+    })
+
+
+@app.route('/playground/profile/<table_name>')
+def playground_profile(table_name):
+    """Get data profiling for a table"""
+    try:
+        profile = playground.get_data_profile(table_name)
+        return jsonify({
+            'success': True,
+            'profile': profile
+        })
+    except Exception as e:
+        return jsonify({
+            'success': False,
+            'error': str(e)
+        }), 400
+
+
+@app.route('/playground/etl-test', methods=['POST'])
+def playground_etl_test():
+    """Run ETL validation test comparing source and target"""
+    try:
+        data = request.json
+        source_query = data.get('source_query', '')
+        target_query = data.get('target_query', '')
+        
+        if not source_query or not target_query:
+            return jsonify({'error': 'Both source_query and target_query required'}), 400
+        
+        result = playground.run_etl_validation_test(source_query, target_query)
+        return jsonify(result)
+    
+    except Exception as e:
+        return jsonify({
+            'success': False,
+            'error': str(e)
+        }), 500
+
+
+@app.route('/playground/test-templates')
+def playground_test_templates():
+    """Get ETL test case templates"""
+    return jsonify({
+        'success': True,
+        'templates': playground.get_etl_test_templates()
+    })
+
+
+@app.route('/generate-test-cases', methods=['POST'])
+def generate_test_cases():
+    """Generate test cases for mapping document"""
+    try:
+        data = request.json
+        
+        # Validate required data
+        if not data.get('mappings') or not data.get('summary'):
+            return jsonify({'error': 'Missing required data: mappings and summary'}), 400
+        
+        mappings = data.get('mappings')
+        summary = data.get('summary')
+        format_type = data.get('format', 'qtest').lower()
+        test_type = data.get('test_type', 'all').lower()
+        
+        # Validate format type
+        valid_formats = ['qtest', 'zephyr', 'testrail', 'ado', 'json']
+        if format_type not in valid_formats:
+            return jsonify({'error': f'Invalid format. Supported formats: {", ".join(valid_formats)}'}), 400
+        
+        # Validate test type
+        valid_test_types = ['positive', 'negative', 'all']
+        if test_type not in valid_test_types:
+            return jsonify({'error': f'Invalid test type. Supported types: {", ".join(valid_test_types)}'}), 400
+        
+        # Generate test cases
+        generator = TestCaseGenerator(mappings, summary)
+        test_cases_data = generator.generate_all_test_cases()
+        
+        # Export in requested format
+        exported_content = generator.export_test_cases(format_type, test_type)
+        
+        # Determine file extension
+        file_extension = 'csv' if format_type != 'json' else 'json'
+        filename = f'etl_test_cases_{format_type}_{test_type}.{file_extension}'
+        
+        # Create response based on format
+        if format_type == 'json':
+            return jsonify({
+                'success': True,
+                'content': exported_content,
+                'filename': filename,
+                'test_case_count': len(test_cases_data.get(test_type, test_cases_data['all'])),
+                'format': format_type
+            })
+        else:
+            # For CSV formats, return as downloadable file
+            output = io.BytesIO()
+            output.write(exported_content.encode('utf-8'))
+            output.seek(0)
+            
+            return send_file(
+                output,
+                mimetype='text/csv',
+                as_attachment=True,
+                download_name=filename
+            )
+    
+    except Exception as e:
+        error_trace = traceback.format_exc()
+        print(f"Error generating test cases: {error_trace}")
+        return jsonify({
+            'error': f'Error generating test cases: {str(e)}',
+            'traceback': error_trace
+        }), 500
+
+
+@app.route('/preview-test-cases', methods=['POST'])
+def preview_test_cases():
+    """Preview test cases without downloading"""
+    try:
+        data = request.json
+        
+        # Validate required data
+        if not data.get('mappings') or not data.get('summary'):
+            return jsonify({'error': 'Missing required data: mappings and summary'}), 400
+        
+        mappings = data.get('mappings')
+        summary = data.get('summary')
+        test_type = data.get('test_type', 'all').lower()
+        
+        # Generate test cases
+        generator = TestCaseGenerator(mappings, summary)
+        test_cases_data = generator.generate_all_test_cases()
+        
+        # Get requested test cases
+        selected_cases = test_cases_data.get(test_type, test_cases_data['all'])
+        
+        return jsonify({
+            'success': True,
+            'test_cases': selected_cases,
+            'positive_count': len(test_cases_data['positive']),
+            'negative_count': len(test_cases_data['negative']),
+            'total_count': len(test_cases_data['all'])
+        })
+    
+    except Exception as e:
+        error_trace = traceback.format_exc()
+        print(f"Error previewing test cases: {error_trace}")
+        return jsonify({
+            'error': f'Error previewing test cases: {str(e)}',
+            'traceback': error_trace
+        }), 500
 
 
 if __name__ == '__main__':

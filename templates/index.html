@@ -89,6 +89,19 @@
             color: #1a3a52;
         }
         
+        .nav-links .playground-link {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            font-weight: 600;
+        }
+        
+        .nav-links .playground-link:hover {
+            background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
+            color: white;
+        }
+        
         .container {
             max-width: 1200px;
             margin: 0 auto;
@@ -568,6 +581,7 @@
         <div class="navbar-content">
             <div class="logo">ETL Mapping to SQL Query</div>
             <div class="nav-links">
+                <a href="/playground/" class="playground-link">🎮 SQL Playground</a>
                 <a href="#features">Features</a>
                 <a href="#documentation">Documentation</a>
                 <button onclick="showContactModal()">Contact Us</button>
@@ -672,6 +686,56 @@
                     <div class="summary" id="summary"></div>
                     <div id="aiAnalysis" style="display: none;"></div>
                     <div id="queries"></div>
+                    
+                    <!-- Test Case Generation Section -->
+                    <div id="testCaseSection" style="display: none; margin-top: 2rem; padding: 1.5rem; background: linear-gradient(135deg, #f8f9fa 0%, #e8f4f8 100%); border-radius: 8px; border: 2px solid #00a2e8;">
+                        <h3 style="color: #1a3a52; margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem;">
+                            <span>🧪</span> Generate Test Cases
+                        </h3>
+                        <p style="color: #5a6c7d; margin-bottom: 1.5rem; line-height: 1.6;">
+                            Create comprehensive test cases covering positive and negative scenarios for your ETL mapping. Export in your preferred test management tool format.
+                        </p>
+                        
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1.5rem;">
+                            <div class="form-group" style="margin: 0;">
+                                <label for="testType" style="font-weight: 600; color: #2c3e50; display: block; margin-bottom: 0.5rem;">Test Type</label>
+                                <select id="testType" style="width: 100%; padding: 0.75rem; border: 1px solid #d0d7e0; border-radius: 4px; font-size: 1em;">
+                                    <option value="all">All Test Cases</option>
+                                    <option value="positive">Positive Test Cases Only</option>
+                                    <option value="negative">Negative Test Cases Only</option>
+                                </select>
+                            </div>
+                            
+                            <div class="form-group" style="margin: 0;">
+                                <label for="testFormat" style="font-weight: 600; color: #2c3e50; display: block; margin-bottom: 0.5rem;">Export Format</label>
+                                <select id="testFormat" style="width: 100%; padding: 0.75rem; border: 1px solid #d0d7e0; border-radius: 4px; font-size: 1em;">
+                                    <option value="qtest">qTest (CSV)</option>
+                                    <option value="zephyr">Zephyr (CSV)</option>
+                                    <option value="testrail">TestRail (CSV)</option>
+                                    <option value="ado">Azure DevOps / ADO (CSV)</option>
+                                    <option value="json">JSON Format</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <div style="display: flex; gap: 1rem;">
+                            <button onclick="previewTestCases()" class="btn btn-secondary" style="flex: 1;">
+                                👁️ Preview Test Cases
+                            </button>
+                            <button onclick="downloadTestCases()" class="btn" style="flex: 1; background: linear-gradient(135deg, #00a2e8 0%, #0077b6 100%);">
+                                📥 Download Test Cases
+                            </button>
+                        </div>
+                        
+                        <!-- Preview Section -->
+                        <div id="testCasePreview" style="display: none; margin-top: 1.5rem; padding: 1.5rem; background: white; border-radius: 6px; border: 1px solid #d0d7e0; max-height: 500px; overflow-y: auto;">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                                <h4 style="color: #1a3a52; margin: 0;">Test Case Preview</h4>
+                                <button onclick="closeTestCasePreview()" style="background: none; border: none; color: #5a6c7d; cursor: pointer; font-size: 1.2em;">✕</button>
+                            </div>
+                            <div id="testCasePreviewContent"></div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -942,6 +1006,12 @@ status,order_status,CASE WHEN source.status = 'ACTIVE' THEN 'A' ELSE 'I' END</pr
                 
                 console.log('✓ Upload successful!');
                 
+                // Store mapping data for test case generation
+                window.currentMappingData = {
+                    mappings: data.summary.mappings || [],
+                    summary: data.summary
+                };
+                
                 // Display results
                 displaySummary(data.summary);
                 
@@ -951,6 +1021,9 @@ status,order_status,CASE WHEN source.status = 'ACTIVE' THEN 'A' ELSE 'I' END</pr
                 }
                 
                 displayQueries(data.queries);
+                
+                // Show test case generation section
+                document.getElementById('testCaseSection').style.display = 'block';
                 
                 results.classList.add('show');
                 
@@ -1205,6 +1278,156 @@ status,order_status,CASE WHEN source.status = 'ACTIVE' THEN 'A' ELSE 'I' END</pr
                     button.textContent = originalText;
                 }, 2000);
             });
+        }
+        
+        // Test Case Generation Functions
+        async function previewTestCases() {
+            if (!window.currentMappingData) {
+                alert('Please upload and process a mapping file first');
+                return;
+            }
+            
+            const testType = document.getElementById('testType').value;
+            const previewDiv = document.getElementById('testCasePreview');
+            const contentDiv = document.getElementById('testCasePreviewContent');
+            
+            contentDiv.innerHTML = '<div class="loading show"><div class="spinner"></div><p>Generating test cases...</p></div>';
+            previewDiv.style.display = 'block';
+            
+            try {
+                const response = await fetch('/preview-test-cases', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({
+                        mappings: window.currentMappingData.mappings,
+                        summary: window.currentMappingData.summary,
+                        test_type: testType
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (!response.ok || data.error) {
+                    throw new Error(data.error || 'Failed to generate test cases');
+                }
+                
+                // Display test case counts
+                let html = '<div style="background: #f0f9ff; padding: 1rem; border-radius: 4px; margin-bottom: 1rem; border-left: 4px solid #00a2e8;">';
+                html += '<div style="display: flex; justify-content: space-around; text-align: center;">';
+                html += '<div><strong style="color: #22c55e; font-size: 1.5em;">' + data.positive_count + '</strong><br><span style="color: #5a6c7d; font-size: 0.9em;">Positive</span></div>';
+                html += '<div><strong style="color: #ef4444; font-size: 1.5em;">' + data.negative_count + '</strong><br><span style="color: #5a6c7d; font-size: 0.9em;">Negative</span></div>';
+                html += '<div><strong style="color: #2c5aa0; font-size: 1.5em;">' + data.total_count + '</strong><br><span style="color: #5a6c7d; font-size: 0.9em;">Total</span></div>';
+                html += '</div></div>';
+                
+                // Display test cases
+                if (data.test_cases && data.test_cases.length > 0) {
+                    data.test_cases.forEach((tc, idx) => {
+                        const isPositive = tc.category === 'Positive';
+                        const bgColor = isPositive ? '#f0fdf4' : '#fef2f2';
+                        const borderColor = isPositive ? '#22c55e' : '#ef4444';
+                        const iconColor = isPositive ? '#22c55e' : '#ef4444';
+                        
+                        html += '<div style="background: ' + bgColor + '; border-left: 4px solid ' + borderColor + '; padding: 1rem; margin-bottom: 1rem; border-radius: 4px;">';
+                        html += '<div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 0.75rem;">';
+                        html += '<div><strong style="color: ' + iconColor + ';">' + (isPositive ? '✅' : '❌') + ' ' + tc.test_id + '</strong>';
+                        html += '<span style="margin-left: 0.5rem; background: ' + (isPositive ? '#dcfce7' : '#fee2e2') + '; color: ' + iconColor + '; padding: 0.25rem 0.5rem; border-radius: 3px; font-size: 0.8em; font-weight: 600;">' + tc.priority + '</span></div>';
+                        html += '<span style="background: white; padding: 0.25rem 0.5rem; border-radius: 3px; font-size: 0.85em; color: #5a6c7d;">' + tc.type + '</span>';
+                        html += '</div>';
+                        html += '<h5 style="color: #1a3a52; margin-bottom: 0.5rem; font-size: 1em;">' + tc.name + '</h5>';
+                        html += '<p style="color: #5a6c7d; font-size: 0.9em; margin-bottom: 0.75rem; line-height: 1.5;">' + tc.description + '</p>';
+                        
+                        if (tc.test_steps && tc.test_steps.length > 0) {
+                            html += '<details style="margin-top: 0.75rem;"><summary style="cursor: pointer; color: #2c5aa0; font-weight: 500; font-size: 0.9em;">📋 Test Steps (' + tc.test_steps.length + ')</summary>';
+                            html += '<ol style="margin: 0.5rem 0 0 1.5rem; color: #5a6c7d; font-size: 0.85em; line-height: 1.6;">';
+                            tc.test_steps.forEach(step => {
+                                html += '<li style="margin-bottom: 0.25rem;">' + step + '</li>';
+                            });
+                            html += '</ol></details>';
+                        }
+                        
+                        html += '<div style="margin-top: 0.75rem; padding: 0.5rem; background: white; border-radius: 3px;"><strong style="color: #2c5aa0; font-size: 0.85em;">Expected Result:</strong><br><span style="color: #5a6c7d; font-size: 0.85em;">' + tc.expected_result + '</span></div>';
+                        html += '</div>';
+                    });
+                } else {
+                    html += '<p style="color: #5a6c7d; text-align: center; padding: 2rem;">No test cases generated</p>';
+                }
+                
+                contentDiv.innerHTML = html;
+                
+            } catch (err) {
+                console.error('Error previewing test cases:', err);
+                contentDiv.innerHTML = '<div class="error show">Error: ' + err.message + '</div>';
+            }
+        }
+        
+        async function downloadTestCases() {
+            if (!window.currentMappingData) {
+                alert('Please upload and process a mapping file first');
+                return;
+            }
+            
+            const testType = document.getElementById('testType').value;
+            const format = document.getElementById('testFormat').value;
+            
+            try {
+                const response = await fetch('/generate-test-cases', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({
+                        mappings: window.currentMappingData.mappings,
+                        summary: window.currentMappingData.summary,
+                        test_type: testType,
+                        format: format
+                    })
+                });
+                
+                if (!response.ok) {
+                    const data = await response.json();
+                    throw new Error(data.error || 'Failed to generate test cases');
+                }
+                
+                // Handle JSON format differently
+                if (format === 'json') {
+                    const data = await response.json();
+                    if (data.error) {
+                        throw new Error(data.error);
+                    }
+                    
+                    // Download JSON
+                    const blob = new Blob([data.content], { type: 'application/json' });
+                    const url = window.URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = data.filename;
+                    document.body.appendChild(a);
+                    a.click();
+                    window.URL.revokeObjectURL(url);
+                    document.body.removeChild(a);
+                    
+                    alert('✓ Test cases downloaded successfully! (' + data.test_case_count + ' test cases)');
+                } else {
+                    // For CSV formats, response is already a file
+                    const blob = await response.blob();
+                    const url = window.URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = 'etl_test_cases_' + format + '_' + testType + '.csv';
+                    document.body.appendChild(a);
+                    a.click();
+                    window.URL.revokeObjectURL(url);
+                    document.body.removeChild(a);
+                    
+                    alert('✓ Test cases downloaded successfully!');
+                }
+                
+            } catch (err) {
+                console.error('Error downloading test cases:', err);
+                alert('Error: ' + err.message);
+            }
+        }
+        
+        function closeTestCasePreview() {
+            document.getElementById('testCasePreview').style.display = 'none';
         }
         
         function escapeHtml(text) {

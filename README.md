@@ -17,7 +17,30 @@ A Python-based application that converts SQL mapping documents into transformati
 - **Web Interface**: User-friendly Flask-based web application
 - **CLI Support**: Command-line interface for automation
 
-### 🤖 NEW: AI-Powered Features
+### 🧪 NEW: Test Case Generation
+- **Automated Test Case Creation**: Generate comprehensive test cases for your ETL mappings
+- **Positive & Negative Scenarios**: Covers both successful transformations and error handling
+- **Multiple Export Formats**: Export to qTest, Zephyr, TestRail, Azure DevOps (ADO), or JSON
+- **Preview Before Download**: Review generated test cases in the browser
+- **Comprehensive Coverage**: Includes data validation, NULL handling, data type tests, and more
+- **Time-Saving**: Generate dozens of test cases in seconds
+
+> 🎯 **See Documentation**: [Test Case Generation Guide](TEST_CASE_GENERATION_GUIDE.md)
+> Perfect for QA teams, data engineers, and anyone testing ETL processes!
+
+### 🎮 Interactive SQL Playground
+- **Live SQL Editor**: Write and execute SQL queries with syntax highlighting
+- **Sample Data**: Pre-loaded customers and orders tables for testing
+- **Instant Results**: See query results in real-time with formatted tables
+- **Share Queries**: Generate shareable links for queries and results
+- **6 Sample Queries**: Learn from pre-built examples (JOINs, aggregations, ETL transformations)
+- **Schema Browser**: View table structures while writing queries
+- **Safe Execution**: Sandboxed environment with read-only access
+
+> 🎯 **Try it now**: [Launch SQL Playground](https://etl-mapping-converter-to-sql.onrender.com/playground/)
+> Perfect for testing transformations, learning SQL, and sharing query examples!
+
+### 🤖 AI-Powered Features
 - **Intelligent Transformation Suggestions**: Get AI-recommended SQL transformations based on column names and types
 - **Natural Language Mapping Generation**: Describe your ETL mapping in plain English, AI generates the CSV
 - **SQL Query Optimization**: Automatically optimize generated queries for your database
@@ -50,7 +73,7 @@ pip install -r requirements.txt
 # Run the application
 python app.py
 
-# Open browser to: http://localhost:5000
+# Open browser to: https://etl-mapping-converter-to-sql.onrender.com (or http://localhost:5000 for local)
 ```
 
 That's it! The application works immediately.
@@ -93,7 +116,7 @@ cp .env.example .env
 # Run
 docker-compose up -d
 
-# Access at: http://localhost:5000
+# Access at: https://etl-mapping-converter-to-sql.onrender.com (or http://localhost:5000 for local)
 ```
 
 ### Desktop Application (Installable App)
@@ -138,7 +161,8 @@ python app.py
 
 2. Open your browser and navigate to:
 ```
-http://localhost:5000
+https://etl-mapping-converter-to-sql.onrender.com (Production)
+http://localhost:5000 (Local development)
 ```
 
 3. Upload your CSV mapping document and configure:
@@ -325,6 +349,7 @@ This will:
 
 - **[README.md](README.md)** - This file (main documentation)
 - **[QUICK_START.md](QUICK_START.md)** - Quick start guide
+- **[SQL_PLAYGROUND.md](SQL_PLAYGROUND.md)** - 🎮 SQL Playground guide & API reference
 - **[COMPLETE_GUIDE.md](COMPLETE_GUIDE.md)** - Comprehensive usage guide  
 - **[AI_FEATURES.md](AI_FEATURES.md)** - AI features documentation & setup
 - **[PROJECT_SUMMARY.md](PROJECT_SUMMARY.md)** - Project overview
