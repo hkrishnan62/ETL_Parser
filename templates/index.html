@@ -610,6 +610,7 @@
             <div class="logo">ETL Mapping to SQL Query</div>
             <div class="nav-links">
                 <a href="/playground/" class="playground-link">🎮 SQL Playground</a>
+                <a href="#tutorials">Tutorials</a>
                 <a href="#features">Features</a>
                 <a href="#documentation">Documentation</a>
                 <button onclick="showContactModal()">Contact Us</button>
@@ -767,6 +768,376 @@
                     <!-- SQL Queries Section -->
                     <div id="queries" style="width: 100%; max-width: 100%; box-sizing: border-box;"></div>
                 </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Tutorials Section -->
+    <div style="background: white; padding: 3rem 2rem; margin-top: 3rem;">
+        <div class="container">
+            <h2 id="tutorials" style="text-align: center; color: #1a3a52; margin-bottom: 1rem; font-size: 2em;">📚 Learn SQL & Python</h2>
+            <p style="text-align: center; color: #5a6c7d; margin-bottom: 3rem; font-size: 1.1em;">Interactive tutorials with copy-to-clipboard code examples - no server required!</p>
+            
+            <!-- SQL Tutorial -->
+            <div style="background: linear-gradient(135deg, #f8f9fa 0%, #e3eef9 100%); padding: 2rem; border-radius: 8px; margin-bottom: 3rem; border-left: 4px solid #2c5aa0;">
+                <h3 style="color: #2c5aa0; margin-bottom: 1.5rem; font-size: 1.5em;">🎯 SQL Tutorial - Essential Concepts</h3>
+                
+                <div style="margin-bottom: 2rem;">
+                    <h4 style="color: #1a3a52; margin-bottom: 1rem;">1. SELECT Statement - Query Data</h4>
+                    <p style="color: #5a6c7d; margin-bottom: 1rem; line-height: 1.6;">
+                        The SELECT statement is used to retrieve data from a database. It's the most commonly used SQL command.
+                    </p>
+                    <pre style="background: #1e1e1e; color: #d4d4d4; padding: 1rem; border-radius: 4px; overflow-x: auto; font-size: 0.9em;">-- Select all columns from a table
+SELECT * FROM customers;
+
+-- Select specific columns
+SELECT customer_id, first_name, email FROM customers;
+
+-- Select with WHERE clause (filtering)
+SELECT * FROM customers WHERE status = 'ACTIVE';
+
+-- Select with multiple conditions
+SELECT * FROM orders 
+WHERE order_date >= '2024-01-01' 
+  AND status IN ('PENDING', 'SHIPPED');</pre>
+                </div>
+                
+                <div style="margin-bottom: 2rem;">
+                    <h4 style="color: #1a3a52; margin-bottom: 1rem;">2. JOIN Operations - Combine Tables</h4>
+                    <p style="color: #5a6c7d; margin-bottom: 1rem; line-height: 1.6;">
+                        JOINs combine rows from multiple tables based on related columns.
+                    </p>
+                    <pre style="background: #1e1e1e; color: #d4d4d4; padding: 1rem; border-radius: 4px; overflow-x: auto; font-size: 0.9em;">-- INNER JOIN: Returns matching rows from both tables
+SELECT o.order_id, c.customer_name, o.order_date
+FROM orders o
+INNER JOIN customers c ON o.customer_id = c.customer_id;
+
+-- LEFT JOIN: Returns all rows from left table
+SELECT c.customer_name, o.order_id
+FROM customers c
+LEFT JOIN orders o ON c.customer_id = o.customer_id;
+
+-- Multiple JOINs
+SELECT o.order_id, c.customer_name, p.product_name
+FROM orders o
+INNER JOIN customers c ON o.customer_id = c.customer_id
+INNER JOIN products p ON o.product_id = p.product_id;</pre>
+                </div>
+                
+                <div style="margin-bottom: 2rem;">
+                    <h4 style="color: #1a3a52; margin-bottom: 1rem;">3. Aggregate Functions - Summarize Data</h4>
+                    <p style="color: #5a6c7d; margin-bottom: 1rem; line-height: 1.6;">
+                        Aggregate functions perform calculations on multiple rows and return a single value.
+                    </p>
+                    <pre style="background: #1e1e1e; color: #d4d4d4; padding: 1rem; border-radius: 4px; overflow-x: auto; font-size: 0.9em;">-- COUNT: Count rows
+SELECT COUNT(*) as total_customers FROM customers;
+
+-- SUM: Calculate total
+SELECT SUM(order_amount) as total_sales FROM orders;
+
+-- AVG: Calculate average
+SELECT AVG(order_amount) as avg_order_value FROM orders;
+
+-- GROUP BY: Group results
+SELECT customer_id, COUNT(*) as order_count
+FROM orders
+GROUP BY customer_id;
+
+-- GROUP BY with HAVING (filter groups)
+SELECT customer_id, SUM(order_amount) as total_spent
+FROM orders
+GROUP BY customer_id
+HAVING SUM(order_amount) > 1000;</pre>
+                </div>
+                
+                <div style="margin-bottom: 2rem;">
+                    <h4 style="color: #1a3a52; margin-bottom: 1rem;">4. Data Transformations - CASE & CAST</h4>
+                    <p style="color: #5a6c7d; margin-bottom: 1rem; line-height: 1.6;">
+                        Transform and convert data during queries for ETL operations.
+                    </p>
+                    <pre style="background: #1e1e1e; color: #d4d4d4; padding: 1rem; border-radius: 4px; overflow-x: auto; font-size: 0.9em;">-- CASE: Conditional logic
+SELECT 
+    customer_id,
+    CASE 
+        WHEN status = 'ACTIVE' THEN 'A'
+        WHEN status = 'INACTIVE' THEN 'I'
+        ELSE 'U'
+    END as status_code
+FROM customers;
+
+-- CAST: Convert data types
+SELECT 
+    order_id,
+    CAST(order_date AS DATE) as order_date,
+    CAST(order_amount AS DECIMAL(10,2)) as amount
+FROM orders;
+
+-- String functions
+SELECT 
+    UPPER(first_name) as first_name_upper,
+    LOWER(email) as email_lower,
+    CONCAT(first_name, ' ', last_name) as full_name,
+    SUBSTRING(phone, 1, 3) as area_code
+FROM customers;</pre>
+                </div>
+                
+                <div style="margin-bottom: 2rem;">
+                    <h4 style="color: #1a3a52; margin-bottom: 1rem;">5. MINUS/EXCEPT - Data Comparison</h4>
+                    <p style="color: #5a6c7d; margin-bottom: 1rem; line-height: 1.6;">
+                        Compare datasets to find differences - essential for ETL validation.
+                    </p>
+                    <pre style="background: #1e1e1e; color: #d4d4d4; padding: 1rem; border-radius: 4px; overflow-x: auto; font-size: 0.9em;">-- Find records in source but not in target (Oracle)
+SELECT customer_id, email FROM source_customers
+MINUS
+SELECT customer_id, email FROM target_customers;
+
+-- Same concept in PostgreSQL/SQL Server (EXCEPT)
+SELECT customer_id, email FROM source_customers
+EXCEPT
+SELECT customer_id, email FROM target_customers;
+
+-- Practical ETL validation example
+SELECT 
+    COUNT(*) as missing_records_count,
+    'Source has records not in target' as message
+FROM (
+    SELECT customer_id FROM source_customers
+    EXCEPT
+    SELECT customer_id FROM target_customers
+) diff;</pre>
+                </div>
+            </div>
+            
+            <!-- Python Tutorial -->
+            <div style="background: linear-gradient(135deg, #f8f9fa 0%, #fff4e6 100%); padding: 2rem; border-radius: 8px; margin-bottom: 2rem; border-left: 4px solid #f59e0b;">
+                <h3 style="color: #f59e0b; margin-bottom: 1.5rem; font-size: 1.5em;">🐍 Python Tutorial - Data Processing & ETL</h3>
+                
+                <div style="margin-bottom: 2rem;">
+                    <h4 style="color: #1a3a52; margin-bottom: 1rem;">1. Reading CSV Files with Pandas</h4>
+                    <p style="color: #5a6c7d; margin-bottom: 1rem; line-height: 1.6;">
+                        Pandas is the most popular Python library for data manipulation and analysis.
+                    </p>
+                    <pre style="background: #1e1e1e; color: #d4d4d4; padding: 1rem; border-radius: 4px; overflow-x: auto; font-size: 0.9em;">import pandas as pd
+
+# Read a CSV file
+df = pd.read_csv('data.csv')
+
+# Read with specific encoding
+df = pd.read_csv('data.csv', encoding='utf-8')
+
+# Read Excel files
+df = pd.read_excel('data.xlsx', sheet_name='Sheet1')
+
+# Display first rows
+print(df.head())
+
+# Get basic information
+print(df.info())
+print(df.describe())
+
+# Get column names
+print(df.columns.tolist())</pre>
+                </div>
+                
+                <div style="margin-bottom: 2rem;">
+                    <h4 style="color: #1a3a52; margin-bottom: 1rem;">2. Data Filtering & Selection</h4>
+                    <p style="color: #5a6c7d; margin-bottom: 1rem; line-height: 1.6;">
+                        Filter and select specific data from your DataFrame.
+                    </p>
+                    <pre style="background: #1e1e1e; color: #d4d4d4; padding: 1rem; border-radius: 4px; overflow-x: auto; font-size: 0.9em;">import pandas as pd
+
+df = pd.read_csv('customers.csv')
+
+# Select specific columns
+df_selected = df[['customer_id', 'email', 'status']]
+
+# Filter rows based on condition
+active_customers = df[df['status'] == 'ACTIVE']
+
+# Multiple conditions
+filtered = df[(df['age'] > 25) & (df['status'] == 'ACTIVE')]
+
+# Filter using isin()
+selected = df[df['status'].isin(['ACTIVE', 'PENDING'])]
+
+# Filter by string contains
+email_filtered = df[df['email'].str.contains('@gmail.com')]</pre>
+                </div>
+                
+                <div style="margin-bottom: 2rem;">
+                    <h4 style="color: #1a3a52; margin-bottom: 1rem;">3. Data Transformation & Cleaning</h4>
+                    <p style="color: #5a6c7d; margin-bottom: 1rem; line-height: 1.6;">
+                        Clean and transform data for ETL processing.
+                    </p>
+                    <pre style="background: #1e1e1e; color: #d4d4d4; padding: 1rem; border-radius: 4px; overflow-x: auto; font-size: 0.9em;">import pandas as pd
+
+df = pd.read_csv('data.csv')
+
+# Remove duplicates
+df_clean = df.drop_duplicates()
+
+# Handle missing values
+df['column_name'].fillna(0, inplace=True)  # Fill with 0
+df.dropna(subset=['email'], inplace=True)  # Drop rows with null email
+
+# String transformations
+df['email'] = df['email'].str.lower()
+df['name'] = df['name'].str.strip()
+df['full_name'] = df['first_name'] + ' ' + df['last_name']
+
+# Apply custom function
+def categorize_age(age):
+    if age < 18:
+        return 'Minor'
+    elif age < 65:
+        return 'Adult'
+    else:
+        return 'Senior'
+
+df['age_category'] = df['age'].apply(categorize_age)
+
+# Map values
+status_map = {'A': 'ACTIVE', 'I': 'INACTIVE'}
+df['status_full'] = df['status'].map(status_map)</pre>
+                </div>
+                
+                <div style="margin-bottom: 2rem;">
+                    <h4 style="color: #1a3a52; margin-bottom: 1rem;">4. Database Connections & SQL</h4>
+                    <p style="color: #5a6c7d; margin-bottom: 1rem; line-height: 1.6;">
+                        Connect to databases and execute SQL queries from Python.
+                    </p>
+                    <pre style="background: #1e1e1e; color: #d4d4d4; padding: 1rem; border-radius: 4px; overflow-x: auto; font-size: 0.9em;">import pandas as pd
+import sqlite3
+from sqlalchemy import create_engine
+
+# SQLite connection
+conn = sqlite3.connect('database.db')
+df = pd.read_sql_query("SELECT * FROM customers", conn)
+conn.close()
+
+# PostgreSQL with SQLAlchemy
+engine = create_engine('postgresql://user:password@localhost/dbname')
+df = pd.read_sql_query("SELECT * FROM customers WHERE status='ACTIVE'", engine)
+
+# Write DataFrame to database
+df.to_sql('customers', engine, if_exists='replace', index=False)
+
+# Execute query and get results
+with engine.connect() as conn:
+    result = conn.execute("SELECT COUNT(*) FROM customers")
+    count = result.fetchone()[0]
+    print(f"Total customers: {count}")</pre>
+                </div>
+                
+                <div style="margin-bottom: 2rem;">
+                    <h4 style="color: #1a3a52; margin-bottom: 1rem;">5. ETL Pipeline Example</h4>
+                    <p style="color: #5a6c7d; margin-bottom: 1rem; line-height: 1.6;">
+                        Complete ETL pipeline: Extract, Transform, Load data.
+                    </p>
+                    <pre style="background: #1e1e1e; color: #d4d4d4; padding: 1rem; border-radius: 4px; overflow-x: auto; font-size: 0.9em;">import pandas as pd
+from sqlalchemy import create_engine
+
+def etl_pipeline():
+    # EXTRACT: Read from source
+    print("Extracting data...")
+    source_df = pd.read_csv('source_data.csv')
+    
+    # TRANSFORM: Clean and transform
+    print("Transforming data...")
+    
+    # Remove duplicates
+    source_df = source_df.drop_duplicates(subset=['customer_id'])
+    
+    # Clean email
+    source_df['email'] = source_df['email'].str.lower().str.strip()
+    
+    # Handle missing values
+    source_df['phone'].fillna('000-000-0000', inplace=True)
+    
+    # Add derived columns
+    source_df['full_name'] = (source_df['first_name'] + ' ' + 
+                              source_df['last_name'])
+    
+    # Status transformation
+    source_df['status_code'] = source_df['status'].map({
+        'ACTIVE': 'A',
+        'INACTIVE': 'I'
+    })
+    
+    # LOAD: Write to target
+    print("Loading data...")
+    engine = create_engine('postgresql://user:pass@localhost/db')
+    source_df.to_sql('customers', engine, 
+                     if_exists='replace', 
+                     index=False)
+    
+    print(f"✓ ETL Complete! Loaded {len(source_df)} records")
+    
+    # VALIDATE: Check data quality
+    with engine.connect() as conn:
+        result = conn.execute("SELECT COUNT(*) FROM customers")
+        count = result.fetchone()[0]
+        print(f"Validation: {count} records in target database")
+
+# Run the pipeline
+if __name__ == "__main__":
+    etl_pipeline()</pre>
+                </div>
+                
+                <div style="background: #fff; padding: 1.5rem; border-radius: 6px; border: 2px solid #f59e0b; margin-top: 2rem;">
+                    <h4 style="color: #1a3a52; margin-bottom: 1rem;">💡 Pro Tips for ETL Development</h4>
+                    <ul style="color: #5a6c7d; line-height: 1.8; padding-left: 1.5rem;">
+                        <li><strong>Error Handling:</strong> Always wrap database operations in try-except blocks</li>
+                        <li><strong>Logging:</strong> Use Python's logging module to track ETL progress</li>
+                        <li><strong>Data Validation:</strong> Check data types, null values, and constraints before loading</li>
+                        <li><strong>Performance:</strong> Use chunking for large datasets: <code style="background: #f3f4f6; padding: 0.2rem 0.4rem; border-radius: 3px;">pd.read_csv('file.csv', chunksize=10000)</code></li>
+                        <li><strong>Testing:</strong> Always test with sample data before running on production</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <!-- Quick Reference -->
+            <div style="background: #f0fdf4; padding: 2rem; border-radius: 8px; border-left: 4px solid #22c55e;">
+                <h3 style="color: #15803d; margin-bottom: 1.5rem; font-size: 1.3em;">🚀 Quick Reference - Common ETL Tasks</h3>
+                
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem;">
+                    <div style="background: white; padding: 1.5rem; border-radius: 6px;">
+                        <h4 style="color: #1a3a52; margin-bottom: 1rem;">SQL Validation Query</h4>
+                        <pre style="background: #1e1e1e; color: #d4d4d4; padding: 0.75rem; border-radius: 4px; overflow-x: auto; font-size: 0.85em;">-- Check row counts
+SELECT COUNT(*) FROM source
+MINUS
+SELECT COUNT(*) FROM target;</pre>
+                    </div>
+                    
+                    <div style="background: white; padding: 1.5rem; border-radius: 6px;">
+                        <h4 style="color: #1a3a52; margin-bottom: 1rem;">Python Data Validation</h4>
+                        <pre style="background: #1e1e1e; color: #d4d4d4; padding: 0.75rem; border-radius: 4px; overflow-x: auto; font-size: 0.85em;"># Compare DataFrames
+diff = source_df.compare(target_df)
+print(f"Differences: {len(diff)}")</pre>
+                    </div>
+                    
+                    <div style="background: white; padding: 1.5rem; border-radius: 6px;">
+                        <h4 style="color: #1a3a52; margin-bottom: 1rem;">Export to CSV</h4>
+                        <pre style="background: #1e1e1e; color: #d4d4d4; padding: 0.75rem; border-radius: 4px; overflow-x: auto; font-size: 0.85em;"># Save DataFrame
+df.to_csv('output.csv', 
+          index=False, 
+          encoding='utf-8')</pre>
+                    </div>
+                    
+                    <div style="background: white; padding: 1.5rem; border-radius: 6px;">
+                        <h4 style="color: #1a3a52; margin-bottom: 1rem;">Date Formatting</h4>
+                        <pre style="background: #1e1e1e; color: #d4d4d4; padding: 0.75rem; border-radius: 4px; overflow-x: auto; font-size: 0.85em;"># Python date conversion
+df['date'] = pd.to_datetime(
+    df['date'], 
+    format='%Y-%m-%d')</pre>
+                    </div>
+                </div>
+            </div>
+            
+            <div style="text-align: center; margin-top: 2rem; padding: 2rem; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 8px;">
+                <h3 style="color: white; margin-bottom: 1rem;">🎮 Try the SQL Playground!</h3>
+                <p style="color: rgba(255,255,255,0.9); margin-bottom: 1.5rem;">Practice these SQL queries in our interactive playground</p>
+                <a href="/playground/" class="btn" style="background: white; color: #667eea; text-decoration: none; display: inline-block; padding: 0.875rem 2rem; font-weight: 600;">Launch SQL Playground →</a>
             </div>
         </div>
     </div>
@@ -1471,6 +1842,122 @@ status,order_status,CASE WHEN source.status = 'ACTIVE' THEN 'A' ELSE 'I' END</pr
             div.textContent = text;
             return div.innerHTML;
         }
+        
+        // Tutorial Code Copy Functionality - All Client-Side
+        document.addEventListener('DOMContentLoaded', function() {
+            // Add copy buttons to all code blocks in tutorials
+            const codeBlocks = document.querySelectorAll('#tutorials pre');
+            
+            codeBlocks.forEach((block, index) => {
+                // Create wrapper for position relative
+                const wrapper = document.createElement('div');
+                wrapper.style.position = 'relative';
+                block.parentNode.insertBefore(wrapper, block);
+                wrapper.appendChild(block);
+                
+                // Create copy button
+                const copyBtn = document.createElement('button');
+                copyBtn.innerHTML = '📋 Copy';
+                copyBtn.style.cssText = `
+                    position: absolute;
+                    top: 0.5rem;
+                    right: 0.5rem;
+                    padding: 0.4rem 0.8rem;
+                    background: rgba(255, 255, 255, 0.9);
+                    border: 1px solid #d0d7e0;
+                    border-radius: 4px;
+                    cursor: pointer;
+                    font-size: 0.8em;
+                    color: #2c5aa0;
+                    font-weight: 500;
+                    transition: all 0.2s;
+                    z-index: 10;
+                `;
+                
+                copyBtn.addEventListener('mouseenter', function() {
+                    this.style.background = 'white';
+                    this.style.transform = 'scale(1.05)';
+                });
+                
+                copyBtn.addEventListener('mouseleave', function() {
+                    this.style.background = 'rgba(255, 255, 255, 0.9)';
+                    this.style.transform = 'scale(1)';
+                });
+                
+                copyBtn.addEventListener('click', function() {
+                    const code = block.textContent;
+                    
+                    // Use modern clipboard API (works without server)
+                    if (navigator.clipboard && navigator.clipboard.writeText) {
+                        navigator.clipboard.writeText(code).then(() => {
+                            copyBtn.innerHTML = '✓ Copied!';
+                            copyBtn.style.background = '#dcfce7';
+                            copyBtn.style.color = '#15803d';
+                            copyBtn.style.borderColor = '#22c55e';
+                            
+                            setTimeout(() => {
+                                copyBtn.innerHTML = '📋 Copy';
+                                copyBtn.style.background = 'rgba(255, 255, 255, 0.9)';
+                                copyBtn.style.color = '#2c5aa0';
+                                copyBtn.style.borderColor = '#d0d7e0';
+                            }, 2000);
+                        }).catch(err => {
+                            console.error('Copy failed:', err);
+                            fallbackCopy(code, copyBtn);
+                        });
+                    } else {
+                        // Fallback for older browsers
+                        fallbackCopy(code, copyBtn);
+                    }
+                });
+                
+                wrapper.appendChild(copyBtn);
+            });
+            
+            // Fallback copy method for older browsers
+            function fallbackCopy(text, button) {
+                const textArea = document.createElement('textarea');
+                textArea.value = text;
+                textArea.style.position = 'fixed';
+                textArea.style.left = '-999999px';
+                document.body.appendChild(textArea);
+                textArea.select();
+                
+                try {
+                    document.execCommand('copy');
+                    button.innerHTML = '✓ Copied!';
+                    button.style.background = '#dcfce7';
+                    button.style.color = '#15803d';
+                    
+                    setTimeout(() => {
+                        button.innerHTML = '📋 Copy';
+                        button.style.background = 'rgba(255, 255, 255, 0.9)';
+                        button.style.color = '#2c5aa0';
+                    }, 2000);
+                } catch (err) {
+                    button.innerHTML = '❌ Failed';
+                    setTimeout(() => {
+                        button.innerHTML = '📋 Copy';
+                    }, 2000);
+                } finally {
+                    document.body.removeChild(textArea);
+                }
+            }
+            
+            // Smooth scroll for tutorial links (client-side only)
+            document.querySelectorAll('a[href^="#tutorials"]').forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const target = document.querySelector(this.getAttribute('href'));
+                    if (target) {
+                        target.scrollIntoView({
+                            behavior: 'smooth',
+                            block: 'start'
+                        });
+                    }
+                });
+            });
+        });
     </script>
 </body>
 </html>

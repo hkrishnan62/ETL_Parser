@@ -483,6 +483,7 @@
                     <button class="tab-btn active" onclick="switchTab('etl-tests')">ETL Tests</button>
                     <button class="tab-btn" onclick="switchTab('data-quality')">Data Quality</button>
                     <button class="tab-btn" onclick="switchTab('profiling')">Profiling</button>
+                    <button class="tab-btn" onclick="switchTab('tutorial')">📚 Tutorial</button>
                     <button class="tab-btn" onclick="switchTab('schema')">Schema</button>
                 </div>
                 
@@ -499,6 +500,78 @@
                 <!-- Profiling Tab -->
                 <div id="profiling" class="tab-content">
                     <div id="profilingQueries"></div>
+                </div>
+                
+                <!-- Tutorial Tab -->
+                <div id="tutorial" class="tab-content" style="padding: 1rem; overflow-y: auto; max-height: calc(100vh - 350px);">
+                    <h4 style="color: #2c5aa0; margin-bottom: 1rem; font-size: 1.1em;">🎯 SQL Quick Reference</h4>
+                    
+                    <div style="margin-bottom: 1.5rem; padding: 1rem; background: #f0f9ff; border-radius: 6px; border-left: 3px solid #2c5aa0;">
+                        <h5 style="margin: 0 0 0.5rem 0; color: #1a3a52; font-size: 0.95em;">SELECT Basics</h5>
+                        <pre style="background: #1e1e1e; color: #d4d4d4; padding: 0.75rem; border-radius: 4px; overflow-x: auto; font-size: 0.8em; margin: 0;">-- All columns
+SELECT * FROM customers;
+
+-- Specific columns
+SELECT customer_id, email
+FROM customers
+WHERE status = 'ACTIVE';</pre>
+                    </div>
+                    
+                    <div style="margin-bottom: 1.5rem; padding: 1rem; background: #fef3c7; border-radius: 6px; border-left: 3px solid #f59e0b;">
+                        <h5 style="margin: 0 0 0.5rem 0; color: #1a3a52; font-size: 0.95em;">JOINs</h5>
+                        <pre style="background: #1e1e1e; color: #d4d4d4; padding: 0.75rem; border-radius: 4px; overflow-x: auto; font-size: 0.8em; margin: 0;">-- INNER JOIN
+SELECT c.customer_id, o.order_id
+FROM customers c
+INNER JOIN orders o
+  ON c.customer_id = o.customer_id;</pre>
+                    </div>
+                    
+                    <div style="margin-bottom: 1.5rem; padding: 1rem; background: #f0fdf4; border-radius: 6px; border-left: 3px solid #22c55e;">
+                        <h5 style="margin: 0 0 0.5rem 0; color: #1a3a52; font-size: 0.95em;">Aggregations</h5>
+                        <pre style="background: #1e1e1e; color: #d4d4d4; padding: 0.75rem; border-radius: 4px; overflow-x: auto; font-size: 0.8em; margin: 0;">-- Count & Sum
+SELECT 
+  COUNT(*) as total,
+  SUM(amount) as total_amt
+FROM orders
+GROUP BY customer_id;</pre>
+                    </div>
+                    
+                    <div style="margin-bottom: 1.5rem; padding: 1rem; background: #fef2f2; border-radius: 6px; border-left: 3px solid #ef4444;">
+                        <h5 style="margin: 0 0 0.5rem 0; color: #1a3a52; font-size: 0.95em;">ETL Validation</h5>
+                        <pre style="background: #1e1e1e; color: #d4d4d4; padding: 0.75rem; border-radius: 4px; overflow-x: auto; font-size: 0.8em; margin: 0;">-- Find differences
+SELECT * FROM source
+EXCEPT
+SELECT * FROM target;</pre>
+                    </div>
+                    
+                    <div style="margin-bottom: 1.5rem; padding: 1rem; background: #f5f3ff; border-radius: 6px; border-left: 3px solid #7c3aed;">
+                        <h5 style="margin: 0 0 0.5rem 0; color: #1a3a52; font-size: 0.95em;">CASE Statement</h5>
+                        <pre style="background: #1e1e1e; color: #d4d4d4; padding: 0.75rem; border-radius: 4px; overflow-x: auto; font-size: 0.8em; margin: 0;">-- Conditional logic
+SELECT 
+  customer_id,
+  CASE 
+    WHEN status = 'ACTIVE' 
+      THEN 'A'
+    ELSE 'I'
+  END as status_code
+FROM customers;</pre>
+                    </div>
+                    
+                    <div style="padding: 1rem; background: #e0f2fe; border-radius: 6px;">
+                        <h5 style="margin: 0 0 0.75rem 0; color: #1a3a52; font-size: 0.95em;">💡 Pro Tips</h5>
+                        <ul style="margin: 0; padding-left: 1.25rem; color: #5a6c7d; font-size: 0.85em; line-height: 1.6;">
+                            <li>Use <code style="background: white; padding: 0.1rem 0.3rem; border-radius: 2px;">WHERE</code> before <code style="background: white; padding: 0.1rem 0.3rem; border-radius: 2px;">GROUP BY</code></li>
+                            <li><code style="background: white; padding: 0.1rem 0.3rem; border-radius: 2px;">HAVING</code> filters after grouping</li>
+                            <li>Click examples above to try them!</li>
+                            <li>Use <code style="background: white; padding: 0.1rem 0.3rem; border-radius: 2px;">LIMIT</code> for large results</li>
+                        </ul>
+                    </div>
+                    
+                    <div style="margin-top: 1rem; text-align: center;">
+                        <a href="/" style="color: #2c5aa0; text-decoration: none; font-size: 0.85em; font-weight: 500;">
+                            📖 View Full Tutorials →
+                        </a>
+                    </div>
                 </div>
                 
                 <!-- Schema Tab -->
@@ -911,6 +984,116 @@ SELECT 'Target' as target, COUNT(*) as row_count FROM customers;</textarea>
                     showError('Failed to generate profile: ' + err.message);
                 });
         };
+        
+        // Add copy buttons to tutorial code blocks (client-side only)
+        document.addEventListener('DOMContentLoaded', function() {
+            const tutorialCodeBlocks = document.querySelectorAll('#tutorial pre');
+            
+            tutorialCodeBlocks.forEach((block) => {
+                // Create wrapper
+                const wrapper = document.createElement('div');
+                wrapper.style.position = 'relative';
+                block.parentNode.insertBefore(wrapper, block);
+                wrapper.appendChild(block);
+                
+                // Create copy button
+                const copyBtn = document.createElement('button');
+                copyBtn.innerHTML = '📋';
+                copyBtn.style.cssText = `
+                    position: absolute;
+                    top: 0.25rem;
+                    right: 0.25rem;
+                    padding: 0.3rem 0.6rem;
+                    background: rgba(255, 255, 255, 0.95);
+                    border: 1px solid #d0d7e0;
+                    border-radius: 3px;
+                    cursor: pointer;
+                    font-size: 0.85em;
+                    transition: all 0.2s;
+                    z-index: 10;
+                `;
+                
+                copyBtn.addEventListener('mouseenter', function() {
+                    this.style.background = 'white';
+                    this.style.transform = 'scale(1.1)';
+                });
+                
+                copyBtn.addEventListener('mouseleave', function() {
+                    this.style.background = 'rgba(255, 255, 255, 0.95)';
+                    this.style.transform = 'scale(1)';
+                });
+                
+                copyBtn.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    const code = block.textContent;
+                    
+                    if (navigator.clipboard && navigator.clipboard.writeText) {
+                        navigator.clipboard.writeText(code).then(() => {
+                            copyBtn.innerHTML = '✓';
+                            copyBtn.style.background = '#dcfce7';
+                            copyBtn.style.color = '#15803d';
+                            
+                            setTimeout(() => {
+                                copyBtn.innerHTML = '📋';
+                                copyBtn.style.background = 'rgba(255, 255, 255, 0.95)';
+                                copyBtn.style.color = 'inherit';
+                            }, 1500);
+                        });
+                    } else {
+                        // Fallback
+                        const textArea = document.createElement('textarea');
+                        textArea.value = code;
+                        textArea.style.position = 'fixed';
+                        textArea.style.left = '-999999px';
+                        document.body.appendChild(textArea);
+                        textArea.select();
+                        
+                        try {
+                            document.execCommand('copy');
+                            copyBtn.innerHTML = '✓';
+                            copyBtn.style.background = '#dcfce7';
+                            
+                            setTimeout(() => {
+                                copyBtn.innerHTML = '📋';
+                                copyBtn.style.background = 'rgba(255, 255, 255, 0.95)';
+                            }, 1500);
+                        } catch (err) {
+                            console.error('Copy failed:', err);
+                        } finally {
+                            document.body.removeChild(textArea);
+                        }
+                    }
+                });
+                
+                wrapper.appendChild(copyBtn);
+            });
+            
+            // Make code blocks clickable to copy to editor
+            tutorialCodeBlocks.forEach((block) => {
+                block.style.cursor = 'pointer';
+                block.title = 'Click to load in editor';
+                
+                block.addEventListener('click', function() {
+                    const code = this.textContent.trim();
+                    if (typeof editor !== 'undefined' && editor) {
+                        editor.setValue(code);
+                        // Scroll to editor
+                        document.querySelector('.editor-container').scrollIntoView({
+                            behavior: 'smooth',
+                            block: 'start'
+                        });
+                        // Show feedback
+                        const errorContainer = document.getElementById('errorContainer');
+                        if (errorContainer) {
+                            errorContainer.innerHTML = '<div class="success-message">✓ Query loaded in editor - Click Run to execute!</div>';
+                            setTimeout(() => {
+                                errorContainer.innerHTML = '';
+                            }, 3000);
+                        }
+                    }
+                });
+            });
+        });
     </script>
 </body>
 </html>
