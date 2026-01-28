@@ -1,0 +1,837 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SQL Playground - Interactive SQL Query Editor | ETL Parser</title>
+    <meta name="description" content="Free online SQL playground with live query execution, syntax highlighting, and sample data. Test SQL queries, share results, and learn SQL interactively.">
+    <meta name="keywords" content="SQL playground, SQL editor online, SQL test, interactive SQL, SQL sandbox, learn SQL, SQL practice">
+    
+    <!-- CodeMirror CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/theme/dracula.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/hint/show-hint.min.css">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', sans-serif;
+            background: #1e1e1e;
+            color: #e0e0e0;
+            min-height: 100vh;
+        }
+        
+        .navbar {
+            background: #2d2d2d;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+            padding: 1rem 2rem;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        .navbar-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            font-size: 1.3em;
+            font-weight: 700;
+            color: #4fc3f7;
+            letter-spacing: -0.5px;
+        }
+        
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            font-size: 0.9em;
+        }
+        
+        .nav-links a {
+            text-decoration: none;
+            color: #b0b0b0;
+            transition: color 0.3s;
+        }
+        
+        .nav-links a:hover {
+            color: #4fc3f7;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 1.5rem;
+        }
+        
+        .playground-header {
+            margin-bottom: 1.5rem;
+        }
+        
+        .playground-header h1 {
+            font-size: 1.8em;
+            color: #4fc3f7;
+            margin-bottom: 0.5rem;
+        }
+        
+        .playground-header p {
+            color: #b0b0b0;
+            font-size: 0.95em;
+        }
+        
+        .playground-layout {
+            display: grid;
+            grid-template-columns: 250px 1fr 350px;
+            gap: 1.5rem;
+            height: calc(100vh - 200px);
+        }
+        
+        @media (max-width: 1200px) {
+            .playground-layout {
+                grid-template-columns: 1fr;
+                height: auto;
+            }
+            
+            .sidebar, .results-panel {
+                height: auto;
+            }
+        }
+        
+        .sidebar {
+            background: #2d2d2d;
+            border-radius: 8px;
+            padding: 1.5rem;
+            overflow-y: auto;
+        }
+        
+        .sidebar h3 {
+            font-size: 1em;
+            color: #4fc3f7;
+            margin-bottom: 1rem;
+        }
+        
+        .tab-buttons {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+            flex-wrap: wrap;
+        }
+        
+        .tab-btn {
+            padding: 0.5rem 1rem;
+            background: #1e1e1e;
+            border: 1px solid #3d3d3d;
+            color: #b0b0b0;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.85em;
+            transition: all 0.3s;
+        }
+        
+        .tab-btn.active {
+            background: #4fc3f7;
+            color: #1e1e1e;
+            border-color: #4fc3f7;
+        }
+        
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        .sample-query {
+            background: #1e1e1e;
+            padding: 0.8rem;
+            border-radius: 4px;
+            margin-bottom: 0.8rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: 1px solid transparent;
+        }
+        
+        .sample-query:hover {
+            border-color: #4fc3f7;
+            background: #252525;
+        }
+        
+        .sample-query-name {
+            font-weight: 600;
+            color: #e0e0e0;
+            font-size: 0.9em;
+            margin-bottom: 0.3rem;
+        }
+        
+        .sample-query-desc {
+            font-size: 0.8em;
+            color: #808080;
+        }
+        
+        .sample-query-category {
+            font-size: 0.75em;
+            color: #81c784;
+            margin-top: 0.3rem;
+            font-weight: 500;
+        }
+        
+        .schema-table {
+            margin-bottom: 1rem;
+        }
+        
+        .schema-table-name {
+            font-weight: 600;
+            color: #81c784;
+            font-size: 0.9em;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .schema-column {
+            font-size: 0.85em;
+            color: #b0b0b0;
+            padding: 0.3rem 0.5rem;
+            padding-left: 1.5rem;
+        }
+        
+        .schema-column-type {
+            color: #ce93d8;
+            font-size: 0.8em;
+        }
+        
+        .editor-panel {
+            display: flex;
+            flex-direction: column;
+            background: #2d2d2d;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        
+        .editor-toolbar {
+            background: #1e1e1e;
+            padding: 0.8rem 1rem;
+            display: flex;
+            gap: 0.8rem;
+            border-bottom: 1px solid #3d3d3d;
+        }
+        
+        .btn {
+            padding: 0.6rem 1.2rem;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.9em;
+            font-weight: 500;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .btn-primary {
+            background: #4fc3f7;
+            color: #1e1e1e;
+        }
+        
+        .btn-primary:hover {
+            background: #29b6f6;
+        }
+        
+        .btn-secondary {
+            background: #424242;
+            color: #e0e0e0;
+        }
+        
+        .btn-secondary:hover {
+            background: #525252;
+        }
+        
+        .btn-success {
+            background: #66bb6a;
+            color: #1e1e1e;
+        }
+        
+        .btn-success:hover {
+            background: #4caf50;
+        }
+        
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
+        .editor-container {
+            flex: 1;
+            overflow: hidden;
+        }
+        
+        .CodeMirror {
+            height: 100% !important;
+            font-size: 14px;
+            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+        }
+        
+        .results-panel {
+            background: #2d2d2d;
+            border-radius: 8px;
+            padding: 1.5rem;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .results-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+        
+        .results-header h3 {
+            font-size: 1em;
+            color: #4fc3f7;
+        }
+        
+        .results-stats {
+            font-size: 0.85em;
+            color: #b0b0b0;
+        }
+        
+        .results-table-container {
+            flex: 1;
+            overflow: auto;
+            background: #1e1e1e;
+            border-radius: 4px;
+            border: 1px solid #3d3d3d;
+        }
+        
+        .results-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.85em;
+        }
+        
+        .results-table th {
+            background: #424242;
+            color: #4fc3f7;
+            padding: 0.8rem;
+            text-align: left;
+            position: sticky;
+            top: 0;
+            font-weight: 600;
+            border-bottom: 2px solid #4fc3f7;
+        }
+        
+        .results-table td {
+            padding: 0.8rem;
+            border-bottom: 1px solid #3d3d3d;
+            color: #e0e0e0;
+        }
+        
+        .results-table tr:hover {
+            background: #252525;
+        }
+        
+        .error-message {
+            background: #d32f2f;
+            color: white;
+            padding: 1rem;
+            border-radius: 4px;
+            margin-top: 1rem;
+            font-size: 0.9em;
+        }
+        
+        .success-message {
+            background: #388e3c;
+            color: white;
+            padding: 1rem;
+            border-radius: 4px;
+            margin-top: 1rem;
+            font-size: 0.9em;
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 3rem;
+            color: #808080;
+        }
+        
+        .empty-state-icon {
+            font-size: 3em;
+            margin-bottom: 1rem;
+        }
+        
+        .share-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.7);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .share-modal.active {
+            display: flex;
+        }
+        
+        .share-modal-content {
+            background: #2d2d2d;
+            padding: 2rem;
+            border-radius: 8px;
+            max-width: 500px;
+            width: 90%;
+        }
+        
+        .share-modal h3 {
+            color: #4fc3f7;
+            margin-bottom: 1rem;
+        }
+        
+        .share-url-container {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        .share-url {
+            flex: 1;
+            background: #1e1e1e;
+            border: 1px solid #3d3d3d;
+            padding: 0.8rem;
+            border-radius: 4px;
+            color: #4fc3f7;
+            font-family: monospace;
+        }
+        
+        .loading {
+            text-align: center;
+            padding: 2rem;
+            color: #808080;
+        }
+        
+        .spinner {
+            border: 3px solid #3d3d3d;
+            border-top: 3px solid #4fc3f7;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 1rem;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="navbar">
+        <div class="navbar-content">
+            <div class="logo">🚀 SQL Playground</div>
+            <div class="nav-links">
+                <a href="/">← Back to ETL Validator</a>
+                <a href="#" id="aboutLink">About</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="playground-header">
+            <h1>🎮 Interactive SQL Playground</h1>
+            <p>Write SQL queries, test with sample data, and share your results instantly</p>
+        </div>
+
+        <div class="playground-layout">
+            <!-- Sidebar with samples and schema -->
+            <div class="sidebar">
+                <h3>📚 ETL Test Library</h3>
+                
+                <!-- Tab Buttons -->
+                <div class="tab-buttons">
+                    <button class="tab-btn active" onclick="switchTab('etl-tests')">ETL Tests</button>
+                    <button class="tab-btn" onclick="switchTab('data-quality')">Data Quality</button>
+                    <button class="tab-btn" onclick="switchTab('profiling')">Profiling</button>
+                    <button class="tab-btn" onclick="switchTab('schema')">Schema</button>
+                </div>
+                
+                <!-- ETL Tests Tab -->
+                <div id="etl-tests" class="tab-content active">
+                    <div id="sampleQueries"></div>
+                </div>
+                
+                <!-- Data Quality Tab -->
+                <div id="data-quality" class="tab-content">
+                    <div id="qualityQueries"></div>
+                </div>
+                
+                <!-- Profiling Tab -->
+                <div id="profiling" class="tab-content">
+                    <div id="profilingQueries"></div>
+                </div>
+                
+                <!-- Schema Tab -->
+                <div id="schema" class="tab-content">
+                    <div id="databaseSchema"></div>
+                </div>
+            </div>
+
+            <!-- Editor Panel -->
+            <div class="editor-panel">
+                <div class="editor-toolbar">
+                    <button class="btn btn-primary" id="runBtn">
+                        ▶️ Run Query
+                    </button>
+                    <button class="btn btn-secondary" id="clearBtn">
+                        🗑️ Clear
+                    </button>
+                    <button class="btn btn-success" id="shareBtn">
+                        🔗 Share
+                    </button>
+                    <button class="btn btn-secondary" id="profileBtn" title="Profile selected table">
+                        📊 Profile Table
+                    </button>
+                </div>
+                <div class="editor-container">
+                    <textarea id="sqlEditor">-- ETL Testing Playground
+-- Sample tables: customers, orders
+
+-- Test Row Count Validation
+SELECT 'Source' as source, COUNT(*) as row_count FROM customers
+UNION ALL
+SELECT 'Target' as target, COUNT(*) as row_count FROM customers;</textarea>
+                </div>
+            </div>
+
+            <!-- Results Panel -->
+            <div class="results-panel">
+                <div class="results-header">
+                    <h3>📊 Results</h3>
+                    <span class="results-stats" id="resultsStats"></span>
+                </div>
+                <div class="results-table-container" id="resultsContainer">
+                    <div class="empty-state">
+                        <div class="empty-state-icon">💭</div>
+                        <p>Run a query to see results</p>
+                    </div>
+                </div>
+                <div id="errorContainer"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Share Modal -->
+    <div class="share-modal" id="shareModal">
+        <div class="share-modal-content">
+            <h3>🔗 Share Your Query</h3>
+            <p style="color: #b0b0b0; margin-bottom: 1rem; font-size: 0.9em;">
+                Copy this link to share your query and results
+            </p>
+            <div class="share-url-container">
+                <input type="text" class="share-url" id="shareUrl" readonly>
+                <button class="btn btn-primary" id="copyShareBtn">Copy</button>
+            </div>
+            <button class="btn btn-secondary" id="closeModalBtn" style="width: 100%;">Close</button>
+        </div>
+    </div>
+
+    <!-- CodeMirror JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/sql/sql.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/hint/show-hint.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/hint/sql-hint.min.js"></script>
+
+    <script>
+        // Initialize CodeMirror
+        const editor = CodeMirror.fromTextArea(document.getElementById('sqlEditor'), {
+            mode: 'text/x-sql',
+            theme: 'dracula',
+            lineNumbers: true,
+            lineWrapping: true,
+            autofocus: true,
+            extraKeys: {
+                'Ctrl-Space': 'autocomplete',
+                'Ctrl-Enter': function() { runQuery(); }
+            }
+        });
+
+        let currentResults = null;
+
+        // Check if this is a shared view
+        const sharedData = {{ shared_data | tojson | safe if shared_data else 'null' }};
+        if (sharedData) {
+            editor.setValue(sharedData.query);
+            if (sharedData.results) {
+                displayResults(sharedData.results);
+            } else {
+                // Execute the shared query
+                runQuery();
+            }
+        }
+
+        // Tab switching function
+        function switchTab(tabName) {
+            // Hide all tabs
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            
+            // Show selected tab
+            document.getElementById(tabName).classList.add('active');
+            event.target.classList.add('active');
+        }
+
+        // Load sample queries
+        fetch('/playground/samples')
+            .then(res => res.json())
+            .then(data => {
+                const etlContainer = document.getElementById('sampleQueries');
+                const qualityContainer = document.getElementById('qualityQueries');
+                const profilingContainer = document.getElementById('profilingQueries');
+                
+                data.samples.forEach(sample => {
+                    const div = document.createElement('div');
+                    div.className = 'sample-query';
+                    div.innerHTML = `
+                        <div class="sample-query-name">${sample.name}</div>
+                        <div class="sample-query-desc">${sample.description}</div>
+                        ${sample.category ? `<div class="sample-query-category">📋 ${sample.category}</div>` : ''}
+                    `;
+                    div.onclick = () => editor.setValue(sample.query);
+                    
+                    // Categorize queries
+                    if (sample.category === 'ETL Testing') {
+                        etlContainer.appendChild(div);
+                    } else if (sample.category === 'Data Quality') {
+                        qualityContainer.appendChild(div);
+                    } else if (sample.category === 'Data Profiling') {
+                        profilingContainer.appendChild(div);
+                    } else {
+                        etlContainer.appendChild(div);
+                    }
+                });
+            });
+
+        // Load database schema
+        fetch('/playground/schema')
+            .then(res => res.json())
+            .then(data => {
+                const container = document.getElementById('databaseSchema');
+                Object.entries(data.schema).forEach(([tableName, columns]) => {
+                    const tableDiv = document.createElement('div');
+                    tableDiv.className = 'schema-table';
+                    
+                    const nameDiv = document.createElement('div');
+                    nameDiv.className = 'schema-table-name';
+                    nameDiv.innerHTML = `📋 ${tableName}`;
+                    tableDiv.appendChild(nameDiv);
+                    
+                    columns.forEach(col => {
+                        const colDiv = document.createElement('div');
+                        colDiv.className = 'schema-column';
+                        colDiv.innerHTML = `${col.name} <span class="schema-column-type">${col.type}</span>`;
+                        tableDiv.appendChild(colDiv);
+                    });
+                    
+                    container.appendChild(tableDiv);
+                });
+            });
+
+        // Run Query
+        document.getElementById('runBtn').onclick = runQuery;
+        
+        function runQuery() {
+            const query = editor.getValue();
+            const resultsContainer = document.getElementById('resultsContainer');
+            const errorContainer = document.getElementById('errorContainer');
+            const runBtn = document.getElementById('runBtn');
+            
+            if (!query.trim()) {
+                showError('Please enter a SQL query');
+                return;
+            }
+            
+            // Show loading
+            resultsContainer.innerHTML = '<div class="loading"><div class="spinner"></div>Executing query...</div>';
+            errorContainer.innerHTML = '';
+            runBtn.disabled = true;
+            
+            fetch('/playground/execute', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({ query: query })
+            })
+            .then(res => res.json())
+            .then(data => {
+                runBtn.disabled = false;
+                if (data.success) {
+                    currentResults = data;
+                    displayResults(data);
+                } else {
+                    showError(data.error);
+                }
+            })
+            .catch(err => {
+                runBtn.disabled = false;
+                showError('Network error: ' + err.message);
+            });
+        }
+
+        function displayResults(data) {
+            const resultsContainer = document.getElementById('resultsContainer');
+            const statsElement = document.getElementById('resultsStats');
+            const errorContainer = document.getElementById('errorContainer');
+            
+            errorContainer.innerHTML = '';
+            statsElement.textContent = `${data.row_count} rows`;
+            
+            if (data.rows.length === 0) {
+                resultsContainer.innerHTML = '<div class="empty-state"><div class="empty-state-icon">✓</div><p>Query executed successfully<br>No rows returned</p></div>';
+                return;
+            }
+            
+            let html = '<table class="results-table"><thead><tr>';
+            data.columns.forEach(col => {
+                html += `<th>${col}</th>`;
+            });
+            html += '</tr></thead><tbody>';
+            
+            data.rows.forEach(row => {
+                html += '<tr>';
+                data.columns.forEach(col => {
+                    const value = row[col];
+                    html += `<td>${value !== null && value !== undefined ? value : '<span style="color: #808080;">NULL</span>'}</td>`;
+                });
+                html += '</tr>';
+            });
+            
+            html += '</tbody></table>';
+            resultsContainer.innerHTML = html;
+        }
+
+        function showError(message) {
+            const resultsContainer = document.getElementById('resultsContainer');
+            const errorContainer = document.getElementById('errorContainer');
+            
+            resultsContainer.innerHTML = '<div class="empty-state"><div class="empty-state-icon">❌</div><p>Query failed</p></div>';
+            errorContainer.innerHTML = `<div class="error-message">${message}</div>`;
+        }
+
+        // Clear Editor
+        document.getElementById('clearBtn').onclick = () => {
+            editor.setValue('');
+            document.getElementById('resultsContainer').innerHTML = '<div class="empty-state"><div class="empty-state-icon">💭</div><p>Run a query to see results</p></div>';
+            document.getElementById('errorContainer').innerHTML = '';
+            document.getElementById('resultsStats').textContent = '';
+        };
+
+        // Share Query
+        document.getElementById('shareBtn').onclick = () => {
+            const query = editor.getValue();
+            
+            if (!query.trim()) {
+                showError('Please enter a SQL query to share');
+                return;
+            }
+            
+            fetch('/playground/share', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({
+                    query: query,
+                    results: currentResults
+                })
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.success) {
+                    document.getElementById('shareUrl').value = data.share_url;
+                    document.getElementById('shareModal').classList.add('active');
+                } else {
+                    showError('Failed to create share link: ' + data.error);
+                }
+            })
+            .catch(err => {
+                showError('Network error: ' + err.message);
+            });
+        };
+
+        // Copy share URL
+        document.getElementById('copyShareBtn').onclick = () => {
+            const shareUrl = document.getElementById('shareUrl');
+            shareUrl.select();
+            document.execCommand('copy');
+            
+            const btn = document.getElementById('copyShareBtn');
+            btn.textContent = '✓ Copied!';
+            setTimeout(() => {
+                btn.textContent = 'Copy';
+            }, 2000);
+        };
+
+        // Close modal
+        document.getElementById('closeModalBtn').onclick = () => {
+            document.getElementById('shareModal').classList.remove('active');
+        };
+
+        // Close modal on background click
+        document.getElementById('shareModal').onclick = (e) => {
+            if (e.target.id === 'shareModal') {
+                document.getElementById('shareModal').classList.remove('active');
+            }
+        };
+        
+        // Profile Table button
+        document.getElementById('profileBtn').onclick = () => {
+            const tableName = prompt('Enter table name to profile:', 'customers');
+            if (!tableName) return;
+            
+            fetch(`/playground/profile/${tableName}`)
+                .then(res => res.json())
+                .then(data => {
+                    if (data.success) {
+                        const profile = data.profile;
+                        let report = `-- Data Profile for ${profile.table}\n`;
+                        report += `-- Total Rows: ${profile.row_count}\n\n`;
+                        
+                        Object.entries(profile.columns).forEach(([col, stats]) => {
+                            report += `-- Column: ${col}\n`;
+                            report += `--   Distinct Values: ${stats.distinct_values}\n`;
+                            report += `--   NULL Count: ${stats.null_count} (${stats.null_percentage}%)\n`;
+                            report += `--   Completeness: ${stats.completeness}%\n\n`;
+                        });
+                        
+                        editor.setValue(report);
+                        
+                        // Show summary
+                        const errorContainer = document.getElementById('errorContainer');
+                        errorContainer.innerHTML = `<div class="success-message">✓ Profile generated for ${profile.table} (${profile.row_count} rows)</div>`;
+                    } else {
+                        showError(data.error);
+                    }
+                })
+                .catch(err => {
+                    showError('Failed to generate profile: ' + err.message);
+                });
+        };
+    </script>
+</body>
+</html>
