@@ -1,4 +1,4 @@
-# Allow all bots
+# Allow all bots to crawl the site
 User-agent: *
 Allow: /
 
@@ -6,10 +6,13 @@ Allow: /
 Disallow: /uploads/
 Disallow: /admin/
 
-# Allow Google to crawl static assets
+# Explicitly allow Google
 User-agent: Googlebot
 Allow: /
-Allow: /static/
+
+# Explicitly allow Google Mobile-Bot
+User-agent: Googlebot-Image
+Allow: /
 
 # Sitemaps
 Sitemap: https://etl-parser.onrender.com/sitemap.xml

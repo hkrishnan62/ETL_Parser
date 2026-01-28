@@ -70,6 +70,10 @@ class SQLPlayground:
     def _create_default_sample_data(self, conn: sqlite3.Connection):
         """Create default sample tables for demonstration"""
         # Customer table
+import random
+        from datetime import datetime, timedelta
+        
+        # 1. Customers table
         conn.execute('''
             CREATE TABLE customers (
                 customer_id INTEGER PRIMARY KEY,
@@ -77,48 +81,498 @@ class SQLPlayground:
                 last_name TEXT,
                 email TEXT,
                 phone TEXT,
-                created_date TEXT
+                date_of_birth TEXT,
+                ssn TEXT,
+                address TEXT,
+                city TEXT,
+                state TEXT,
+                zip_code TEXT,
+                customer_since TEXT,
+                customer_type TEXT,
+                risk_score INTEGER
             )
         ''')
         
-        sample_customers = [
-            (1, 'John', 'Doe', 'john.doe@email.com', '555-1234', '2024-01-15'),
-            (2, 'Jane', 'Smith', 'jane.smith@email.com', '555-5678', '2024-02-20'),
-            (3, 'Bob', 'Johnson', 'bob.j@email.com', '555-9012', '2024-03-10'),
-            (4, 'Alice', 'Williams', 'alice.w@email.com', '555-3456', '2024-04-05'),
-            (5, 'Charlie', 'Brown', 'charlie.b@email.com', '555-7890', '2024-05-12'),
-        ]
+        first_names = ['James', 'Mary', 'John', 'Patricia', 'Robert', 'Jennifer', 'Michael', 'Linda', 'William', 'Elizabeth', 
+                      'David', 'Barbara', 'Richard', 'Susan', 'Joseph', 'Jessica', 'Thomas', 'Sarah', 'Christopher', 'Karen']
+        last_names = ['Smith', 'Johnson', 'Williams', 'Brown', 'Jones', 'Garcia', 'Miller', 'Davis', 'Rodriguez', 'Martinez',
+                     'Hernandez', 'Lopez', 'Gonzalez', 'Wilson', 'Anderson', 'Thomas', 'Taylor', 'Moore', 'Jackson', 'Martin']
+        cities = ['New York', 'Los Angeles', 'Chicago', 'Houston', 'Phoenix', 'Philadelphia', 'San Antonio', 'San Diego', 'Dallas', 'San Jose']
+        states = ['NY', 'CA', 'IL', 'TX', 'AZ', 'PA', 'TX', 'CA', 'TX', 'CA']
+        customer_types = ['Individual', 'Business', 'Premium', 'Corporate']
         
-        conn.executemany(
-            'INSERT INTO customers VALUES (?, ?, ?, ?, ?, ?)',
-            sample_customers
-        )
+        customers = []
+        for i in range(1, 1001):
+            fname = random.choice(first_names)
+            lname = random.choice(last_names)
+            city_idx = random.randint(0, len(cities)-1)
+            dob = (datetime(1950, 1, 1) + timedelta(days=random.randint(0, 25000))).strftime('%Y-%m-%d')
+            since = (datetime(2010, 1, 1) + timedelta(days=random.randint(0, 5000))).strftime('%Y-%m-%d')
+            customers.append((
+                i, fname, lname, f'{fname.lower()}.{lname.lower()}{i}@email.com',
+                f'555-{random.randint(1000,9999)}', dob, f'***-**-{random.randint(1000,9999)}',
+                f'{random.randint(100,9999)} Main St', cities[city_idx], states[city_idx],
+                f'{random.randint(10000,99999)}', since, random.choice(customer_types), random.randint(300,850)
+            ))
         
-        # Orders table
+        conn.executemany('INSERT INTO customers VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)', customers)
+        
+        # 2. Accounts table
         conn.execute('''
-            CREATE TABLE orders (
-                order_id INTEGER PRIMARY KEY,
+            CREATE TABLE accounts (
+                account_id INTEGER PRIMARY KEY,
                 customer_id INTEGER,
-                order_date TEXT,
-                total_amount REAL,
+                account_number TEXT,
+                account_type TEXT,
+                balance REAL,
+                currency TEXT,
+                status TEXT,
+                open_date TEXT,
+                interest_rate REAL,
+                branch_id INTEGER
+            )
+        ''')
+        
+        account_types = ['Checking', 'Savings', 'Money Market', 'CD', 'Investment']
+        statuses = ['Active', 'Dormant', 'Closed', 'Frozen']
+        accounts = []
+        for i in range(1, 1001):
+            accounts.append((
+                i, random.randint(1, 1000), f'ACC{str(i).zfill(10)}',
+                random.choice(account_types), round(random.uniform(100, 500000), 2),
+                'USD', random.choice(statuses),
+                (datetime(2015, 1, 1) + timedelta(days=random.randint(0, 3000))).strftime('%Y-%m-%d'),
+                round(random.uniform(0.5, 5.5), 2), random.randint(1, 50)
+            ))
+        
+        conn.executemany('INSERT INTO accounts VALUES (?,?,?,?,?,?,?,?,?,?)', accounts)
+        
+        # 3. Transactions table
+        conn.execute('''
+            CREATE TABLE transactions (
+                transaction_id INTEGER PRIMARY KEY,
+                account_id INTEGER,
+                transaction_date TEXT,
+                transaction_type TEXT,
+                amount REAL,
+                balance_after REAL,
+                description TEXT,
+                merchant_name TEXT,
+                category TEXT,
                 status TEXT
             )
         ''')
         
-        sample_orders = [
-            (101, 1, '2024-06-01', 150.00, 'completed'),
-            (102, 2, '2024-06-05', 299.99, 'completed'),
-            (103, 1, '2024-06-10', 75.50, 'pending'),
-            (104, 3, '2024-06-15', 425.00, 'completed'),
-            (105, 4, '2024-06-20', 199.99, 'shipped'),
-            (106, 2, '2024-06-25', 89.99, 'completed'),
-            (107, 5, '2024-06-30', 350.00, 'pending'),
-        ]
+        trans_types = ['Debit', 'Credit', 'Transfer', 'ATM Withdrawal', 'Check', 'Wire']
+        categories = ['Groceries', 'Gas', 'Restaurants', 'Shopping', 'Utilities', 'Healthcare', 'Entertainment', 'Travel', 'Other']
+        merchants = ['Walmart', 'Target', 'Amazon', 'Shell', 'Starbucks', 'McDonalds', 'CVS', 'Home Depot', 'Best Buy', 'Costco']
         
-        conn.executemany(
-            'INSERT INTO orders VALUES (?, ?, ?, ?, ?)',
-            sample_orders
-        )
+        transactions = []
+        for i in range(1, 1001):
+            trans_date = (datetime(2024, 1, 1) + timedelta(days=random.randint(0, 365))).strftime('%Y-%m-%d %H:%M:%S')
+            amount = round(random.uniform(5, 5000), 2)
+            transactions.append((
+                i, random.randint(1, 1000), trans_date, random.choice(trans_types),
+                amount, round(random.uniform(100, 50000), 2),
+                f'Transaction {i}', random.choice(merchants), random.choice(categories), 'Completed'
+            ))
+        
+        conn.executemany('INSERT INTO transactions VALUES (?,?,?,?,?,?,?,?,?,?)', transactions)
+        
+        # 4. Loans table
+        conn.execute('''
+            CREATE TABLE loans (
+                loan_id INTEGER PRIMARY KEY,
+                customer_id INTEGER,
+                loan_type TEXT,
+                principal_amount REAL,
+                interest_rate REAL,
+                term_months INTEGER,
+                monthly_payment REAL,
+                outstanding_balance REAL,
+                origination_date TEXT,
+                maturity_date TEXT,
+                status TEXT
+            )
+        ''')
+        
+        loan_types = ['Mortgage', 'Auto', 'Personal', 'Student', 'Business', 'Home Equity']
+        loan_statuses = ['Active', 'Paid Off', 'Defaulted', 'In Collections']
+        
+        loans = []
+        for i in range(1, 1001):
+            principal = round(random.uniform(5000, 500000), 2)
+            rate = round(random.uniform(3.0, 18.0), 2)
+            term = random.choice([12, 24, 36, 60, 84, 120, 180, 240, 360])
+            orig_date = (datetime(2015, 1, 1) + timedelta(days=random.randint(0, 3000))).strftime('%Y-%m-%d')
+            mat_date = (datetime.strptime(orig_date, '%Y-%m-%d') + timedelta(days=term*30)).strftime('%Y-%m-%d')
+            monthly_pmt = round(principal * (rate/1200) / (1 - (1 + rate/1200)**(-term)), 2)
+            
+            loans.append((
+                i, random.randint(1, 1000), random.choice(loan_types), principal, rate, term,
+                monthly_pmt, round(principal * random.uniform(0, 0.95), 2), orig_date, mat_date,
+                random.choice(loan_statuses)
+            ))
+        
+        conn.executemany('INSERT INTO loans VALUES (?,?,?,?,?,?,?,?,?,?,?)', loans)
+        
+        # 5. Credit Cards table
+        conn.execute('''
+            CREATE TABLE credit_cards (
+                card_id INTEGER PRIMARY KEY,
+                customer_id INTEGER,
+                card_number TEXT,
+                card_type TEXT,
+                credit_limit REAL,
+                current_balance REAL,
+                available_credit REAL,
+                apr REAL,
+                issue_date TEXT,
+                expiry_date TEXT,
+                status TEXT
+            )
+        ''')
+        
+        card_types = ['Visa', 'Mastercard', 'American Express', 'Discover']
+        
+        cards = []
+        for i in range(1, 1001):
+            limit = round(random.uniform(1000, 50000), 2)
+            balance = round(random.uniform(0, limit), 2)
+            issue = (datetime(2018, 1, 1) + timedelta(days=random.randint(0, 2000))).strftime('%Y-%m-%d')
+            expiry = (datetime.strptime(issue, '%Y-%m-%d') + timedelta(days=1460)).strftime('%Y-%m-%d')
+            
+            cards.append((
+                i, random.randint(1, 1000), f'****-****-****-{random.randint(1000,9999)}',
+                random.choice(card_types), limit, balance, limit - balance,
+                round(random.uniform(12.99, 29.99), 2), issue, expiry,
+                random.choice(['Active', 'Closed', 'Suspended'])
+            ))
+        
+        conn.executemany('INSERT INTO credit_cards VALUES (?,?,?,?,?,?,?,?,?,?,?)', cards)
+        
+        # 6. Branches table
+        conn.execute('''
+            CREATE TABLE branches (
+                branch_id INTEGER PRIMARY KEY,
+                branch_name TEXT,
+                address TEXT,
+                city TEXT,
+                state TEXT,
+                zip_code TEXT,
+                phone TEXT,
+                manager_name TEXT,
+                open_date TEXT,
+                branch_type TEXT
+            )
+        ''')
+        
+        branches = []
+        for i in range(1, 1001):
+            city_idx = random.randint(0, len(cities)-1)
+            branches.append((
+                i, f'Branch {i}', f'{random.randint(100,9999)} Financial Ave',
+                cities[city_idx], states[city_idx], f'{random.randint(10000,99999)}',
+                f'555-{random.randint(1000,9999)}', f'{random.choice(first_names)} {random.choice(last_names)}',
+                (datetime(2000, 1, 1) + timedelta(days=random.randint(0, 8000))).strftime('%Y-%m-%d'),
+                random.choice(['Full Service', 'ATM Only', 'Commercial', 'Retail'])
+            ))
+        
+        conn.executemany('INSERT INTO branches VALUES (?,?,?,?,?,?,?,?,?,?)', branches)
+        
+        # 7. Employees table
+        conn.execute('''
+            CREATE TABLE employees (
+                employee_id INTEGER PRIMARY KEY,
+                first_name TEXT,
+                last_name TEXT,
+                email TEXT,
+                phone TEXT,
+                position TEXT,
+                department TEXT,
+                salary REAL,
+                hire_date TEXT,
+                branch_id INTEGER,
+                manager_id INTEGER
+            )
+        ''')
+        
+        positions = ['Teller', 'Personal Banker', 'Loan Officer', 'Branch Manager', 'Financial Advisor', 'Operations Manager']
+        departments = ['Retail Banking', 'Commercial Banking', 'Wealth Management', 'Operations', 'Compliance', 'IT']
+        
+        employees = []
+        for i in range(1, 1001):
+            employees.append((
+                i, random.choice(first_names), random.choice(last_names),
+                f'employee{i}@bank.com', f'555-{random.randint(1000,9999)}',
+                random.choice(positions), random.choice(departments),
+                round(random.uniform(35000, 150000), 2),
+                (datetime(2010, 1, 1) + timedelta(days=random.randint(0, 5000))).strftime('%Y-%m-%d'),
+                random.randint(1, 50), random.randint(1, 100) if i > 100 else None
+            ))
+        
+        conn.executemany('INSERT INTO employees VALUES (?,?,?,?,?,?,?,?,?,?,?)', employees)
+        
+        # 8. Investments table
+        conn.execute('''
+            CREATE TABLE investments (
+                investment_id INTEGER PRIMARY KEY,
+                customer_id INTEGER,
+                account_id INTEGER,
+                investment_type TEXT,
+                symbol TEXT,
+                quantity REAL,
+                purchase_price REAL,
+                current_price REAL,
+                purchase_date TEXT,
+                portfolio_value REAL
+            )
+        ''')
+        
+        inv_types = ['Stock', 'Bond', 'Mutual Fund', 'ETF', 'Options', 'Commodity']
+        symbols = ['AAPL', 'GOOGL', 'MSFT', 'AMZN', 'TSLA', 'JPM', 'BAC', 'WFC', 'GS', 'MS', 'SPY', 'QQQ', 'VTI']
+        
+        investments = []
+        for i in range(1, 1001):
+            qty = round(random.uniform(1, 1000), 2)
+            purchase = round(random.uniform(10, 500), 2)
+            current = purchase * random.uniform(0.5, 2.0)
+            
+            investments.append((
+                i, random.randint(1, 1000), random.randint(1, 1000), random.choice(inv_types),
+                random.choice(symbols), qty, purchase, round(current, 2),
+                (datetime(2020, 1, 1) + timedelta(days=random.randint(0, 1500))).strftime('%Y-%m-%d'),
+                round(qty * current, 2)
+            ))
+        
+        conn.executemany('INSERT INTO investments VALUES (?,?,?,?,?,?,?,?,?,?)', investments)
+        
+        # 9. Insurance Policies table
+        conn.execute('''
+            CREATE TABLE insurance_policies (
+                policy_id INTEGER PRIMARY KEY,
+                customer_id INTEGER,
+                policy_type TEXT,
+                policy_number TEXT,
+                premium_amount REAL,
+                coverage_amount REAL,
+                start_date TEXT,
+                end_date TEXT,
+                status TEXT,
+                beneficiary TEXT
+            )
+        ''')
+        
+        policy_types = ['Life', 'Health', 'Auto', 'Home', 'Disability', 'Umbrella']
+        
+        policies = []
+        for i in range(1, 1001):
+            start = (datetime(2020, 1, 1) + timedelta(days=random.randint(0, 1500))).strftime('%Y-%m-%d')
+            end = (datetime.strptime(start, '%Y-%m-%d') + timedelta(days=365)).strftime('%Y-%m-%d')
+            
+            policies.append((
+                i, random.randint(1, 1000), random.choice(policy_types), f'POL{str(i).zfill(8)}',
+                round(random.uniform(50, 500), 2), round(random.uniform(10000, 1000000), 2),
+                start, end, random.choice(['Active', 'Expired', 'Cancelled']),
+                f'{random.choice(first_names)} {random.choice(last_names)}'
+            ))
+        
+        conn.executemany('INSERT INTO insurance_policies VALUES (?,?,?,?,?,?,?,?,?,?)', policies)
+        
+        # 10. Fraud Alerts table
+        conn.execute('''
+            CREATE TABLE fraud_alerts (
+                alert_id INTEGER PRIMARY KEY,
+                account_id INTEGER,
+                transaction_id INTEGER,
+                alert_date TEXT,
+                alert_type TEXT,
+                risk_level TEXT,
+                description TEXT,
+                status TEXT,
+                assigned_to INTEGER,
+                resolution_date TEXT
+            )
+        ''')
+        
+        alert_types = ['Unusual Transaction', 'Multiple Logins', 'Card Skimming', 'Identity Theft', 'Phishing', 'Account Takeover']
+        risk_levels = ['Low', 'Medium', 'High', 'Critical']
+        
+        alerts = []
+        for i in range(1, 1001):
+            alert_date = (datetime(2024, 1, 1) + timedelta(days=random.randint(0, 365))).strftime('%Y-%m-%d %H:%M:%S')
+            resolution = None if random.random() < 0.3 else (datetime.strptime(alert_date, '%Y-%m-%d %H:%M:%S') + timedelta(hours=random.randint(1, 72))).strftime('%Y-%m-%d %H:%M:%S')
+            
+            alerts.append((
+                i, random.randint(1, 1000), random.randint(1, 1000), alert_date,
+                random.choice(alert_types), random.choice(risk_levels),
+                f'Potential fraud detected on transaction', 
+                random.choice(['Open', 'Investigating', 'Resolved', 'False Positive']),
+                random.randint(1, 100), resolution
+            ))
+        
+        conn.executemany('INSERT INTO fraud_alerts VALUES (?,?,?,?,?,?,?,?,?,?)', alerts)
+        
+        # 11. ATM Transactions table
+        conn.execute('''
+            CREATE TABLE atm_transactions (
+                atm_transaction_id INTEGER PRIMARY KEY,
+                account_id INTEGER,
+                card_id INTEGER,
+                atm_id TEXT,
+                transaction_date TEXT,
+                transaction_type TEXT,
+                amount REAL,
+                fee REAL,
+                location TEXT,
+                status TEXT
+            )
+        ''')
+        
+        atm_types = ['Withdrawal', 'Deposit', 'Balance Inquiry', 'Transfer']
+        
+        atm_trans = []
+        for i in range(1, 1001):
+            atm_trans.append((
+                i, random.randint(1, 1000), random.randint(1, 1000), f'ATM{random.randint(1000,9999)}',
+                (datetime(2024, 1, 1) + timedelta(days=random.randint(0, 365))).strftime('%Y-%m-%d %H:%M:%S'),
+                random.choice(atm_types), round(random.uniform(20, 500), 2),
+                random.choice([0, 2.5, 3.0]), f'{random.choice(cities)}, {random.choice(states)}',
+                'Completed'
+            ))
+        
+        conn.executemany('INSERT INTO atm_transactions VALUES (?,?,?,?,?,?,?,?,?,?)', atm_trans)
+        
+        # 12. Wire Transfers table
+        conn.execute('''
+            CREATE TABLE wire_transfers (
+                transfer_id INTEGER PRIMARY KEY,
+                from_account_id INTEGER,
+                to_account_id INTEGER,
+                amount REAL,
+                currency TEXT,
+                transfer_date TEXT,
+                purpose TEXT,
+                status TEXT,
+                fee REAL,
+                reference_number TEXT
+            )
+        ''')
+        
+        purposes = ['Payment', 'Investment', 'Personal Transfer', 'Business Transaction', 'Loan Payment', 'Property Purchase']
+        
+        wires = []
+        for i in range(1, 1001):
+            wires.append((
+                i, random.randint(1, 1000), random.randint(1, 1000),
+                round(random.uniform(1000, 100000), 2), 'USD',
+                (datetime(2024, 1, 1) + timedelta(days=random.randint(0, 365))).strftime('%Y-%m-%d'),
+                random.choice(purposes), random.choice(['Completed', 'Pending', 'Failed']),
+                round(random.uniform(15, 50), 2), f'WIRE{str(i).zfill(10)}'
+            ))
+        
+        conn.executemany('INSERT INTO wire_transfers VALUES (?,?,?,?,?,?,?,?,?,?)', wires)
+        
+        # 13. Merchant Transactions table
+        conn.execute('''
+            CREATE TABLE merchant_transactions (
+                merchant_trans_id INTEGER PRIMARY KEY,
+                card_id INTEGER,
+                merchant_id TEXT,
+                merchant_name TEXT,
+                merchant_category TEXT,
+                transaction_date TEXT,
+                amount REAL,
+                authorization_code TEXT,
+                status TEXT,
+                points_earned INTEGER
+            )
+        ''')
+        
+        merchant_cats = ['Retail', 'Dining', 'Travel', 'Gas', 'Grocery', 'Online', 'Entertainment', 'Healthcare', 'Utilities']
+        
+        merch_trans = []
+        for i in range(1, 1001):
+            amount = round(random.uniform(5, 2000), 2)
+            merch_trans.append((
+                i, random.randint(1, 1000), f'MER{random.randint(10000,99999)}',
+                random.choice(merchants), random.choice(merchant_cats),
+                (datetime(2024, 1, 1) + timedelta(days=random.randint(0, 365))).strftime('%Y-%m-%d %H:%M:%S'),
+                amount, f'AUTH{random.randint(100000,999999)}',
+                random.choice(['Approved', 'Declined', 'Pending']),
+                int(amount * random.uniform(1, 3))
+            ))
+        
+        conn.executemany('INSERT INTO merchant_transactions VALUES (?,?,?,?,?,?,?,?,?,?)', merch_trans)
+        
+        # 14. Credit Reports table
+        conn.execute('''
+            CREATE TABLE credit_reports (
+                report_id INTEGER PRIMARY KEY,
+                customer_id INTEGER,
+                report_date TEXT,
+                credit_score INTEGER,
+                credit_bureau TEXT,
+                total_accounts INTEGER,
+                total_debt REAL,
+                payment_history TEXT,
+                credit_utilization REAL,
+                derogatory_marks INTEGER
+            )
+        ''')
+        
+        bureaus = ['Experian', 'Equifax', 'TransUnion']
+        payment_hist = ['Excellent', 'Good', 'Fair', 'Poor']
+        
+        reports = []
+        for i in range(1, 1001):
+            score = random.randint(300, 850)
+            reports.append((
+                i, random.randint(1, 1000),
+                (datetime(2024, 1, 1) + timedelta(days=random.randint(0, 365))).strftime('%Y-%m-%d'),
+                score, random.choice(bureaus), random.randint(1, 30),
+                round(random.uniform(1000, 200000), 2),
+                payment_hist[min(3, (850-score)//150)],
+                round(random.uniform(0, 100), 1),
+                random.randint(0, 5)
+            ))
+        
+        conn.executemany('INSERT INTO credit_reports VALUES (?,?,?,?,?,?,?,?,?,?)', reports)
+        
+        # 15. Compliance Audit Logs table
+        conn.execute('''
+            CREATE TABLE compliance_audit_logs (
+                audit_id INTEGER PRIMARY KEY,
+                account_id INTEGER,
+                audit_date TEXT,
+                audit_type TEXT,
+                regulation TEXT,
+                finding TEXT,
+                severity TEXT,
+                auditor_id INTEGER,
+                status TEXT,
+                resolution_date TEXT
+            )
+        ''')
+        
+        audit_types = ['KYC Review', 'AML Check', 'Transaction Review', 'Account Verification', 'Risk Assessment']
+        regulations = ['BSA', 'OFAC', 'GDPR', 'SOX', 'FCRA', 'Reg E', 'Reg Z']
+        findings = ['Compliant', 'Minor Issue', 'Major Issue', 'Critical Issue', 'Under Review']
+        severities = ['Low', 'Medium', 'High', 'Critical']
+        
+        audits = []
+        for i in range(1, 1001):
+            audit_date = (datetime(2024, 1, 1) + timedelta(days=random.randint(0, 365))).strftime('%Y-%m-%d')
+            resolution = None if random.random() < 0.2 else (datetime.strptime(audit_date, '%Y-%m-%d') + timedelta(days=random.randint(1, 30))).strftime('%Y-%m-%d')
+            
+            audits.append((
+                i, random.randint(1, 1000), audit_date, random.choice(audit_types),
+                random.choice(regulations), random.choice(findings), random.choice(severities),
+                random.randint(1, 50), random.choice(['Open', 'Closed', 'In Progress']),
+                resolution
+            ))
+        
+        conn.executemany('INSERT INTO compliance_audit_logs VALUES (?,?,?,?,?,?,?,?,?,?)', audits)
         
         conn.commit()
     
@@ -285,157 +739,188 @@ class SQLPlayground:
             return None
     
     def get_sample_queries(self) -> List[Dict[str, str]]:
-        """Get list of sample queries for quick start"""
+        """Get list of sample queries for Financial Services database"""
         return [
             {
-                'name': 'ETL Row Count Validation',
-                'description': 'Compare source and target row counts',
-                'category': 'ETL Testing',
-                'query': '''-- Source row count
-SELECT 'Source' as table_name, COUNT(*) as row_count FROM customers
-UNION ALL
--- Target row count (simulated)
-SELECT 'Target' as table_name, COUNT(*) as row_count FROM customers;'''
-            },
-            {
-                'name': 'Data Transformation Test',
-                'description': 'Test ETL transformations with side-by-side comparison',
-                'category': 'ETL Testing',
-                'query': '''-- Compare original vs transformed data
-SELECT 
-    customer_id,
-    first_name || ' ' || last_name as original_name,
-    UPPER(first_name) || ' ' || UPPER(last_name) as transformed_name,
-    email as original_email,
-    LOWER(email) as transformed_email,
-    phone as original_phone,
-    REPLACE(phone, '-', '') as transformed_phone
-FROM customers
-LIMIT 5;'''
-            },
-            {
-                'name': 'NULL Value Analysis',
-                'description': 'Find NULL values across all columns',
-                'category': 'Data Quality',
+                'name': 'Account Balance Overview',
+                'description': 'View customer accounts with balances',
+                'category': 'Basic Queries',
                 'query': '''SELECT 
-    'email' as column_name,
-    COUNT(*) as null_count,
-    ROUND(COUNT(*) * 100.0 / (SELECT COUNT(*) FROM customers), 2) as null_percentage
-FROM customers 
-WHERE email IS NULL
-UNION ALL
-SELECT 
-    'phone',
-    COUNT(*),
-    ROUND(COUNT(*) * 100.0 / (SELECT COUNT(*) FROM customers), 2)
-FROM customers 
-WHERE phone IS NULL;'''
+    c.customer_id,
+    c.first_name || ' ' || c.last_name as customer_name,
+    a.account_number,
+    a.account_type,
+    a.balance,
+    a.status
+FROM customers c
+JOIN accounts a ON c.customer_id = a.customer_id
+WHERE a.status = 'Active'
+LIMIT 10;'''
             },
             {
-                'name': 'Duplicate Detection',
-                'description': 'Find duplicate records in source data',
-                'category': 'Data Quality',
+                'name': 'High-Value Transactions',
+                'description': 'Find transactions over $1000',
+                'category': 'Basic Queries',
                 'query': '''SELECT 
-    email,
-    COUNT(*) as duplicate_count
-FROM customers
-GROUP BY email
-HAVING COUNT(*) > 1
-ORDER BY duplicate_count DESC;'''
+    t.transaction_id,
+    t.transaction_date,
+    t.transaction_type,
+    t.amount,
+    t.merchant_name,
+    t.category,
+    a.account_number
+FROM transactions t
+JOIN accounts a ON t.account_id = a.account_id
+WHERE t.amount > 1000
+ORDER BY t.amount DESC
+LIMIT 10;'''
             },
             {
-                'name': 'Data Profiling - Statistics',
-                'description': 'Get min, max, avg for numeric columns',
-                'category': 'Data Profiling',
+                'name': 'Loan Portfolio Analysis',
+                'description': 'Analyze loan distribution by type',
+                'category': 'Analytics',
                 'query': '''SELECT 
-    'orders' as table_name,
-    COUNT(*) as total_rows,
-    COUNT(DISTINCT customer_id) as unique_customers,
-    MIN(total_amount) as min_amount,
-    MAX(total_amount) as max_amount,
-    ROUND(AVG(total_amount), 2) as avg_amount,
-    SUM(total_amount) as total_revenue
-FROM orders;'''
+    loan_type,
+    COUNT(*) as loan_count,
+    ROUND(AVG(principal_amount), 2) as avg_principal,
+    ROUND(AVG(interest_rate), 2) as avg_interest_rate,
+    ROUND(SUM(outstanding_balance), 2) as total_outstanding
+FROM loans
+WHERE status = 'Active'
+GROUP BY loan_type
+ORDER BY total_outstanding DESC;'''
             },
             {
-                'name': 'Referential Integrity Check',
-                'description': 'Check for orphaned records',
-                'category': 'Data Quality',
-                'query': '''-- Find orders without matching customers (orphaned records)
-SELECT 
-    o.order_id,
-    o.customer_id,
-    o.total_amount,
-    'No matching customer' as issue
-FROM orders o
-LEFT JOIN customers c ON o.customer_id = c.customer_id
-WHERE c.customer_id IS NULL;'''
-            },
-            {
-                'name': 'Date Range Validation',
-                'description': 'Check if dates are within expected range',
-                'category': 'Data Quality',
+                'name': 'Credit Card Utilization',
+                'description': 'Calculate credit utilization ratios',
+                'category': 'Risk Analysis',
                 'query': '''SELECT 
-    MIN(created_date) as earliest_date,
-    MAX(created_date) as latest_date,
-    COUNT(*) as total_records,
-    COUNT(CASE WHEN created_date < '2024-01-01' THEN 1 END) as before_2024,
-    COUNT(CASE WHEN created_date > '2024-12-31' THEN 1 END) as after_2024
-FROM customers;'''
+    c.customer_id,
+    c.first_name || ' ' || c.last_name as customer_name,
+    cc.card_type,
+    cc.credit_limit,
+    cc.current_balance,
+    ROUND((cc.current_balance * 100.0 / cc.credit_limit), 2) as utilization_pct
+FROM customers c
+JOIN credit_cards cc ON c.customer_id = cc.customer_id
+WHERE cc.status = 'Active'
+  AND (cc.current_balance * 100.0 / cc.credit_limit) > 70
+ORDER BY utilization_pct DESC
+LIMIT 10;'''
             },
             {
-                'name': 'String Length Validation',
-                'description': 'Check if string lengths match target requirements',
-                'category': 'Data Quality',
+                'name': 'Fraud Alert Dashboard',
+                'description': 'Review high-risk fraud alerts',
+                'category': 'Risk Analysis',
                 'query': '''SELECT 
-    customer_id,
-    email,
-    LENGTH(email) as email_length,
+    f.alert_id,
+    f.alert_date,
+    f.alert_type,
+    f.risk_level,
+    f.status,
+    a.account_number,
+    c.first_name || ' ' || c.last_name as customer_name
+FROM fraud_alerts f
+JOIN accounts a ON f.account_id = a.account_id
+JOIN customers c ON a.customer_id = c.customer_id
+WHERE f.risk_level IN ('High', 'Critical')
+  AND f.status IN ('Open', 'Investigating')
+ORDER BY f.alert_date DESC
+LIMIT 10;'''
+            },
+            {
+                'name': 'Investment Portfolio Summary',
+                'description': 'Analyze customer investment holdings',
+                'category': 'Wealth Management',
+                'query': '''SELECT 
+    c.customer_id,
+    c.first_name || ' ' || c.last_name as customer_name,
+    i.investment_type,
+    COUNT(*) as position_count,
+    ROUND(SUM(i.portfolio_value), 2) as total_value,
+    ROUND(SUM(i.quantity * (i.current_price - i.purchase_price)), 2) as unrealized_gain_loss
+FROM customers c
+JOIN investments i ON c.customer_id = i.customer_id
+GROUP BY c.customer_id, c.first_name, c.last_name, i.investment_type
+HAVING SUM(i.portfolio_value) > 10000
+ORDER BY total_value DESC
+LIMIT 10;'''
+            },
+            {
+                'name': 'Branch Performance Metrics',
+                'description': 'Compare branch account and transaction volumes',
+                'category': 'Analytics',
+                'query': '''SELECT 
+    b.branch_name,
+    b.city,
+    b.state,
+    COUNT(DISTINCT a.account_id) as total_accounts,
+    ROUND(SUM(a.balance), 2) as total_deposits,
+    COUNT(DISTINCT e.employee_id) as employee_count
+FROM branches b
+LEFT JOIN accounts a ON b.branch_id = a.branch_id
+LEFT JOIN employees e ON b.branch_id = e.branch_id
+GROUP BY b.branch_id, b.branch_name, b.city, b.state
+ORDER BY total_deposits DESC
+LIMIT 10;'''
+            },
+            {
+                'name': 'Customer Risk Segmentation',
+                'description': 'Segment customers by risk score',
+                'category': 'Risk Analysis',
+                'query': '''SELECT 
     CASE 
-        WHEN LENGTH(email) > 100 THEN 'Too Long'
-        WHEN LENGTH(email) < 5 THEN 'Too Short'
-        ELSE 'Valid'
-    END as validation_status
+        WHEN risk_score >= 750 THEN 'Low Risk'
+        WHEN risk_score >= 650 THEN 'Medium Risk'
+        WHEN risk_score >= 550 THEN 'High Risk'
+        ELSE 'Very High Risk'
+    END as risk_category,
+    COUNT(*) as customer_count,
+    ROUND(AVG(risk_score), 0) as avg_risk_score,
+    customer_type
 FROM customers
-WHERE LENGTH(email) > 100 OR LENGTH(email) < 5;'''
+GROUP BY risk_category, customer_type
+ORDER BY 
+    CASE risk_category
+        WHEN 'Low Risk' THEN 1
+        WHEN 'Medium Risk' THEN 2
+        WHEN 'High Risk' THEN 3
+        ELSE 4
+    END;'''
             },
             {
-                'name': 'CASE Statement Testing',
-                'description': 'Test complex CASE transformations',
-                'category': 'ETL Testing',
+                'name': 'Monthly Transaction Trends',
+                'description': 'Analyze transaction volume and value by month',
+                'category': 'Analytics',
                 'query': '''SELECT 
-    order_id,
-    status as original_status,
-    total_amount,
-    CASE 
-        WHEN status = 'completed' AND total_amount >= 300 THEN 'High Value - Completed'
-        WHEN status = 'completed' AND total_amount < 300 THEN 'Standard - Completed'
-        WHEN status = 'pending' THEN 'Processing'
-        WHEN status = 'shipped' THEN 'In Transit'
-        ELSE 'Other'
-    END as categorized_status
-FROM orders;'''
+    strftime('%Y-%m', transaction_date) as month,
+    transaction_type,
+    COUNT(*) as transaction_count,
+    ROUND(SUM(amount), 2) as total_amount,
+    ROUND(AVG(amount), 2) as avg_amount
+FROM transactions
+WHERE transaction_date >= date('now', '-6 months')
+GROUP BY month, transaction_type
+ORDER BY month DESC, total_amount DESC
+LIMIT 20;'''
             },
             {
-                'name': 'Aggregation Validation',
-                'description': 'Validate aggregated data matches source totals',
-                'category': 'ETL Testing',
-                'query': '''-- Compare detailed vs aggregated data
-SELECT 
-    'Detail Level' as level,
-    COUNT(*) as record_count,
-    SUM(total_amount) as total_revenue
-FROM orders
-UNION ALL
-SELECT 
-    'Aggregated by Status' as level,
-    COUNT(DISTINCT status) as record_count,
-    SUM(agg_revenue) as total_revenue
-FROM (
-    SELECT status, SUM(total_amount) as agg_revenue
-    FROM orders
-    GROUP BY status
-);'''
+                'name': 'Compliance Audit Summary',
+                'description': 'Review compliance audit findings',
+                'category': 'Compliance',
+                'query': '''SELECT 
+    audit_type,
+    regulation,
+    finding,
+    COUNT(*) as audit_count,
+    COUNT(CASE WHEN status = 'Open' THEN 1 END) as open_count,
+    COUNT(CASE WHEN status = 'Closed' THEN 1 END) as closed_count
+FROM compliance_audit_logs
+WHERE audit_date >= date('now', '-3 months')
+GROUP BY audit_type, regulation, finding
+HAVING audit_count > 2
+ORDER BY open_count DESC, audit_count DESC
+LIMIT 15;'''
             }
         ]
     
