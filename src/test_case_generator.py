@@ -11,6 +11,8 @@ from datetime import datetime
 
 class TestCaseGenerator:
     """Generate test cases for ETL mapping documents in multiple formats"""
+
+    __test__ = False
     
     def __init__(self, mappings: List[Dict[str, Any]], summary: Dict[str, Any]):
         """

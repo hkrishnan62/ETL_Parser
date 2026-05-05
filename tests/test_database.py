@@ -2,9 +2,8 @@
 Database Test Script - Test Generated SQL Queries against SQLite
 This script creates sample data and tests the generated queries
 """
+import pytest
 import sqlite3
-from datetime import datetime
-from src.etl_validator import ETLValidator
 
 def create_test_database():
     """Create an in-memory SQLite database with test data"""
@@ -101,6 +100,15 @@ def create_test_database():
     
     return conn
 
+
+@pytest.fixture
+def conn():
+    connection = create_test_database()
+    try:
+        yield connection
+    finally:
+        connection.close()
+
 def test_simple_queries(conn):
     """Test simple validation queries"""
     cursor = conn.cursor()
@@ -146,7 +154,7 @@ def test_simple_queries(conn):
     for row in sample:
         print(f"   Order: {row[0]}, Customer: {row[1]}, Product: {row[2]}, Status: {row[3]}, Priority: {row[4]}")
     
-    return True
+    assert missing
 
 def test_generated_sql(conn):
     """Test the generated SQL from complex mapping"""
@@ -182,7 +190,7 @@ def test_generated_sql(conn):
     if result[1] > 0:
         print("\n   ✓ Test passed: Found expected missing record(s)")
     
-    return True
+    assert result[1] > 0
 
 def main():
     print("="*80)

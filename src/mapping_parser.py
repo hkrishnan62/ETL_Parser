@@ -10,7 +10,7 @@ class MappingParser:
     """Parse ETL mapping documents from CSV files"""
     
     # Required columns for a valid mapping file
-    REQUIRED_COLUMNS = {'source_column', 'target_column', 'transformation'}
+    REQUIRED_COLUMNS = {'source_column', 'target_column'}
     
     def __init__(self, csv_path: str):
         """
@@ -47,7 +47,7 @@ class MappingParser:
         if missing_columns:
             missing_str = ', '.join(sorted(missing_columns))
             available_str = ', '.join(sorted(available_columns)) if available_columns else "none"
-            return False, f"❌ Missing required columns: {missing_str}\n\n📋 Expected columns: source_column, target_column, transformation\n\n📊 Found columns: {available_str}"
+            return False, f"❌ Missing required columns: {missing_str}\n\n📋 Expected columns: source_column, target_column\n\n📊 Found columns: {available_str}"
         
         # Check if all required columns have at least some data
         for col in self.REQUIRED_COLUMNS:
@@ -55,14 +55,22 @@ class MappingParser:
             if non_null_count == 0:
                 return False, f"❌ Column '{col}' is empty. All required columns must have at least some data."
         
-        # Warn if there are rows with missing critical data
+        # Each row must define a target column and either a source column or a transformation.
         empty_rows = 0
         for idx, row in df.iterrows():
-            if pd.isna(row.get('source_column')) or pd.isna(row.get('target_column')) or pd.isna(row.get('transformation')):
+            source_column = row.get('source_column')
+            target_column = row.get('target_column')
+            transformation = row.get('transformation') if 'transformation' in df.columns else None
+
+            has_source = pd.notna(source_column) and str(source_column).strip() != ''
+            has_target = pd.notna(target_column) and str(target_column).strip() != ''
+            has_transformation = pd.notna(transformation) and str(transformation).strip() != ''
+
+            if not has_target or (not has_source and not has_transformation):
                 empty_rows += 1
         
         if empty_rows > 0:
-            return False, f"❌ Found {empty_rows} row(s) with missing required data (source_column, target_column, or transformation). Please fill in all required fields."
+            return False, f"❌ Found {empty_rows} row(s) with missing required data. Each row must include a target_column and either a source_column or a transformation."
         
         return True, ""
         

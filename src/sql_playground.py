@@ -115,8 +115,44 @@ class SQLPlayground:
             ))
         
         conn.executemany('INSERT INTO customers VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)', customers)
+
+        # 2. Orders table used by the playground UI, examples, and tests
+        conn.execute('''
+            CREATE TABLE orders (
+                order_id INTEGER PRIMARY KEY,
+                customer_id INTEGER,
+                order_date TEXT,
+                product_name TEXT,
+                quantity INTEGER,
+                unit_price REAL,
+                order_amount REAL,
+                total_amount REAL,
+                status TEXT
+            )
+        ''')
+
+        order_statuses = ['Pending', 'Processing', 'Completed', 'Cancelled']
+        products = ['Laptop', 'Phone', 'Monitor', 'Keyboard', 'Mouse', 'Tablet', 'Headset']
+        orders = []
+        for i in range(1, 1001):
+            quantity = random.randint(1, 5)
+            unit_price = round(random.uniform(25, 1500), 2)
+            total_amount = round(quantity * unit_price, 2)
+            orders.append((
+                i,
+                random.randint(1, 1000),
+                (datetime(2024, 1, 1) + timedelta(days=random.randint(0, 365))).strftime('%Y-%m-%d'),
+                random.choice(products),
+                quantity,
+                unit_price,
+                total_amount,
+                total_amount,
+                random.choice(order_statuses)
+            ))
+
+        conn.executemany('INSERT INTO orders VALUES (?,?,?,?,?,?,?,?,?)', orders)
         
-        # 2. Accounts table
+        # 3. Accounts table
         conn.execute('''
             CREATE TABLE accounts (
                 account_id INTEGER PRIMARY KEY,
@@ -146,7 +182,7 @@ class SQLPlayground:
         
         conn.executemany('INSERT INTO accounts VALUES (?,?,?,?,?,?,?,?,?,?)', accounts)
         
-        # 3. Transactions table
+        # 4. Transactions table
         conn.execute('''
             CREATE TABLE transactions (
                 transaction_id INTEGER PRIMARY KEY,
@@ -178,7 +214,7 @@ class SQLPlayground:
         
         conn.executemany('INSERT INTO transactions VALUES (?,?,?,?,?,?,?,?,?,?)', transactions)
         
-        # 4. Loans table
+        # 5. Loans table
         conn.execute('''
             CREATE TABLE loans (
                 loan_id INTEGER PRIMARY KEY,
@@ -215,7 +251,7 @@ class SQLPlayground:
         
         conn.executemany('INSERT INTO loans VALUES (?,?,?,?,?,?,?,?,?,?,?)', loans)
         
-        # 5. Credit Cards table
+        # 6. Credit Cards table
         conn.execute('''
             CREATE TABLE credit_cards (
                 card_id INTEGER PRIMARY KEY,
@@ -593,7 +629,8 @@ class SQLPlayground:
                     'success': False,
                     'error': 'Query contains disallowed operations. Only SELECT statements are allowed.',
                     'rows': [],
-                    'columns': []
+                    'columns': [],
+                    'row_count': 0
                 }
             
             # Create database with sample data
@@ -626,14 +663,16 @@ class SQLPlayground:
                 'success': False,
                 'error': f'SQL Error: {str(e)}',
                 'rows': [],
-                'columns': []
+                'columns': [],
+                'row_count': 0
             }
         except Exception as e:
             return {
                 'success': False,
                 'error': f'Execution Error: {str(e)}',
                 'rows': [],
-                'columns': []
+                'columns': [],
+                'row_count': 0
             }
     
     def _is_safe_query(self, query: str) -> bool:

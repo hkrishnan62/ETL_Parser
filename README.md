@@ -2,10 +2,14 @@
 
 A Python-based application that converts SQL mapping documents into transformation validation SQL queries for ETL (Extract, Transform, Load) processes.
 
+## Statement of need
+
+Data engineering teams already maintain mapping specifications as CSV or Excel workbooks, but validation SQL is still often written by hand for every source-to-target rule. That manual step is slow, inconsistent, and difficult to review at scale across large migrations and warehouse projects. This project closes that gap by converting structured mapping documents into repeatable SQL validation queries and related testing artifacts.
+
 ## 🚀 Features
 
 ### Core Features
-- **CSV Mapping Parser**: Upload CSV files containing ETL mapping definitions
+- **CSV and Excel Mapping Parser**: Upload `.csv`, `.xlsx`, or `.xls` files containing ETL mapping definitions
 - **Complex Transformation Support**: Handles SQL transformations including:
   - CONCAT operations
   - CASE statements
@@ -25,7 +29,7 @@ A Python-based application that converts SQL mapping documents into transformati
 - **Comprehensive Coverage**: Includes data validation, NULL handling, data type tests, and more
 - **Time-Saving**: Generate dozens of test cases in seconds
 
-> 🎯 **See Documentation**: [Test Case Generation Guide](TEST_CASE_GENERATION_GUIDE.md)
+> 🎯 **See Documentation**: [Test Case Generation Guide](docs/TEST_CASE_GENERATION_GUIDE.md)
 > Perfect for QA teams, data engineers, and anyone testing ETL processes!
 
 ### 🎮 Interactive SQL Playground
@@ -49,7 +53,7 @@ A Python-based application that converts SQL mapping documents into transformati
 - **Syntax Validation**: Validate transformation syntax for different database dialects
 
 > 💡 **AI features are optional** - the application works fully without them. Configure OpenAI API key to enable.
-> See [AI_FEATURES.md](AI_FEATURES.md) for detailed documentation.
+> See [AI features documentation](docs/AI_FEATURES.md) for detailed setup and usage notes.
 
 ## 📋 Requirements
 
@@ -138,11 +142,11 @@ python build_desktop_app.py
 
 This creates an installable desktop app (`.exe` for Windows, `.app` for macOS) that users can run without Python!
 
-📖 See [DESKTOP_QUICK_START.md](DESKTOP_QUICK_START.md) for details.
+📖 See [Desktop quick start](docs/DESKTOP_QUICK_START.md) for details.
 
 ### Sharing with Others
 
-See [DEPLOYMENT_GUIDE.md](DEPLOYMENT_GUIDE.md) for complete deployment options including:
+See [Deployment guide](docs/DEPLOYMENT_GUIDE.md) for complete deployment options including:
 - **Desktop App** - Installable executables (Windows/Mac/Linux)
 - GitHub sharing
 - Docker containers
@@ -165,7 +169,9 @@ https://etl-mapping-converter-to-sql.onrender.com (Production)
 http://localhost:5000 (Local development)
 ```
 
-3. Upload your CSV mapping document and configure:
+The Render deployment is currently live. Because it runs on the Render free tier, the first request after inactivity can take 30-60 seconds while the service wakes up.
+
+3. Upload your CSV or Excel mapping document and configure:
    - Source table name
    - Target table name
    - Source schema (optional)
@@ -187,7 +193,7 @@ http://localhost:5000 (Local development)
 from src.etl_validator import ETLValidator
 
 # Initialize validator
-validator = ETLValidator('path/to/mapping.csv')
+validator = ETLValidator('path/to/mapping.csv')  # or path/to/mapping.xlsx
 
 # Load mappings
 validator.load_mappings()
@@ -236,9 +242,9 @@ else:
     queries = validator.generate_validation_queries(...)
 ```
 
-## 📄 CSV Mapping Format
+## 📄 Mapping File Format
 
-Your CSV file should contain the following columns:
+Your CSV or Excel mapping file should contain the following columns:
 
 | Column | Description | Required |
 |--------|-------------|----------|
@@ -247,7 +253,7 @@ Your CSV file should contain the following columns:
 | `transformation` | SQL transformation expression | No |
 | `is_key` | Whether column is a join key (TRUE/FALSE) | No |
 
-### Example Mapping CSV:
+### Example Mapping File:
 
 ```csv
 source_column,target_column,transformation,is_key
@@ -336,7 +342,7 @@ python example_usage.py
 python ai_demo.py
 
 # Automated test suite
-python tests/test_suite.py
+pytest tests/
 ```
 
 This will:
@@ -348,11 +354,11 @@ This will:
 ## 📚 Documentation
 
 - **[README.md](README.md)** - This file (main documentation)
-- **[QUICK_START.md](QUICK_START.md)** - Quick start guide
-- **[SQL_PLAYGROUND.md](SQL_PLAYGROUND.md)** - 🎮 SQL Playground guide & API reference
-- **[COMPLETE_GUIDE.md](COMPLETE_GUIDE.md)** - Comprehensive usage guide  
-- **[AI_FEATURES.md](AI_FEATURES.md)** - AI features documentation & setup
-- **[PROJECT_SUMMARY.md](PROJECT_SUMMARY.md)** - Project overview
+- **[docs/QUICK_START.md](docs/QUICK_START.md)** - Quick start guide
+- **[docs/SQL_PLAYGROUND.md](docs/SQL_PLAYGROUND.md)** - SQL Playground guide and API reference
+- **[docs/COMPLETE_GUIDE.md](docs/COMPLETE_GUIDE.md)** - Comprehensive usage guide
+- **[docs/AI_FEATURES.md](docs/AI_FEATURES.md)** - AI features documentation and setup
+- **[docs/PROJECT_SUMMARY.md](docs/PROJECT_SUMMARY.md)** - Project overview
 - **Example Scripts:**
   - `example_usage.py` - Basic CLI usage
   - `ai_demo.py` - AI features demonstration
@@ -360,7 +366,7 @@ This will:
 
 ## 🤝 Contributing
 
-Contributions are welcome! Please feel free to submit pull requests or open issues for bugs and feature requests.
+Contributions are welcome. See [CONTRIBUTING.md](CONTRIBUTING.md) for issue reporting, pull request workflow, code style, and test instructions. Please also review [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md).
 
 ## 📝 License
 
